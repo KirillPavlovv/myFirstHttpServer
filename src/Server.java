@@ -14,7 +14,7 @@ public class Server {
 
             while (true) {
                 Socket socket = serverSocket.accept();
-                System.out.println(socket.getLocalAddress() + "  is connected");
+                System.out.println("Somebody is connected");
 
                 new Thread(() -> handleRequest(socket)).start();
             }
