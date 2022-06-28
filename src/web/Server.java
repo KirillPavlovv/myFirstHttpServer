@@ -1,12 +1,15 @@
 package web;
 
 import idnumber.EstonianIdNumber;
+import salary.*;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,7 +17,7 @@ import java.util.List;
 
 public class Server {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidPathException {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             System.out.println("Server is started ");
 
@@ -42,7 +45,7 @@ public class Server {
 
             String firstLine = input.readLine();
             String[] lineParts = firstLine.split(" ");
-            System.out.println(firstLine);
+
             if (firstLine.contains("idgenerator")) {
                 String idNumber = generateId(lineParts[1]);
                 output.write("HTTP/1.1 200 OK\n");
@@ -50,10 +53,33 @@ public class Server {
                 output.write("\n");
                 output.write(idNumber + "\n");
             }
+            if (firstLine.contains("salarycalculator")) {
+                ResultResponse calculationResponse = calculateSalary(lineParts[1]);
+
+                output.write("HTTP/1.1 200 OK\n");
+                output.write("Content-Type: text/html, charset=utf-8\n");
+                output.write("\n");
+                output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + " EUR");
+                output.write("<br>");
+                output.write("Social Tax = " + calculationResponse.getSocialTax() + " EUR");
+                output.write("<br>");
+                output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + " EUR");
+                output.write("<br>");
+                output.write("Gross Salary = " + calculationResponse.getGrossSalary() + " EUR");
+                output.write("<br>");
+                output.write("II Funded Pension = " + calculationResponse.getFundedPension() + " EUR");
+                output.write("<br>");
+                output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + " EUR");
+                output.write("<br>");
+                output.write("Income Tax = " + calculationResponse.getIncomeTax() + " EUR");
+                output.write("<br>");
+                output.write("Net Salary = " + calculationResponse.getNetSalary() + " EUR");
+                output.write("<br>");
+            }
+            System.out.println(firstLine);
             while (input.ready()) {
                 System.out.println(input.readLine());
             }
-
             Path path = Paths.get(".", lineParts[1]);
             if (!Files.exists(path)) {
                 output.write("HTTP/1.1 404 NOT_FOUND\n");
@@ -75,17 +101,10 @@ public class Server {
         }
     }
 
-    public static String generateId(String parameters) {
+    public static String generateId(String url) {
 
-        String[] firstSplit = parameters.split("&");
-        List<String> stringList = new ArrayList<>();
-        for (String s : firstSplit) {
-            String[] split1 = s.split("=");
-            stringList.add(split1[1]);
-        }
-        String gender = stringList.get(0);
-        String reversedBirthday = stringList.get(1);
-        String[] splitBirthday = reversedBirthday.split("-");
+        List<String> stringList = getParametersFromUrl(url);
+        String[] splitBirthday = stringList.get(1).split("-");
         StringBuilder stringBuilderBirthday = new StringBuilder();
         for (String s : splitBirthday) {
             stringBuilderBirthday.insert(0, s);
@@ -94,8 +113,30 @@ public class Server {
         stringBuilderBirthday.delete(0, 1);
         String birthday = stringBuilderBirthday.toString();
 
-        return  new EstonianIdNumber(birthday, gender).generateIdNumber();
+        return new EstonianIdNumber(birthday, stringList.get(0)).generateIdNumber();
     }
 
 
+    public static ResultResponse calculateSalary(String url) {
+        List<String> parametersFromUrl = getParametersFromUrl(url);
+        BigDecimal salary = new BigDecimal(parametersFromUrl.get(1));
+        ResultResponse calculationResponse;
+        if (parametersFromUrl.get(0).equals("netto")) {
+            return SalaryCalculation.calculate(new NetSalary(salary));
+        } else if (parametersFromUrl.get(0).equals("brutto")) {
+            return SalaryCalculation.calculate(new GrossSalary(salary));
+        } else {
+            return SalaryCalculation.calculate(new TotalCostsSalary(salary));
+        }
+    }
+
+    private static List<String> getParametersFromUrl(String parameters) {
+        String[] firstSplit = parameters.split("&");
+        List<String> stringList = new ArrayList<>();
+        for (String s : firstSplit) {
+            String[] split1 = s.split("=");
+            stringList.add(split1[1]);
+        }
+        return stringList;
+    }
 }

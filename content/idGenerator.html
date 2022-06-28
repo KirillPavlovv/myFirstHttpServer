@@ -5,11 +5,14 @@
 
 
 <form action="/idgenerator" method="get">
-<label for="gender"><b>Please choose</b>
+<label for="gender"><b>Please choose: </b></label>
  <br>
  <br>
-Gender(Male/Female):</label>
-  <input type="text" name="gender" />
+<label>Gender(Male/Female):</label>
+  <select name="gender">
+    <option value="male">Male</option>
+    <option value="female" selected>Female</option>
+  </select>
 
 <br><br>
 
