@@ -17,6 +17,9 @@ import java.util.List;
 
 public class Server {
 
+    public static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
+    public static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
+
     public static void main(String[] args) throws InvalidPathException {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             System.out.println("Server is started ");
@@ -48,33 +51,15 @@ public class Server {
 
             if (firstLine.contains("idgenerator")) {
                 String idNumber = generateId(lineParts[1]);
-                output.write("HTTP/1.1 200 OK\n");
-                output.write("Content-Type: text/html, charset=utf-8\n");
+                output.write(HTTP_200_OK);
+                output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
                 output.write("\n");
                 output.write(idNumber + "\n");
             }
             if (firstLine.contains("salarycalculator")) {
                 ResultResponse calculationResponse = calculateSalary(lineParts[1]);
 
-                output.write("HTTP/1.1 200 OK\n");
-                output.write("Content-Type: text/html, charset=utf-8\n");
-                output.write("\n");
-                output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + " EUR");
-                output.write("<br>");
-                output.write("Social Tax = " + calculationResponse.getSocialTax() + " EUR");
-                output.write("<br>");
-                output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + " EUR");
-                output.write("<br>");
-                output.write("Gross Salary = " + calculationResponse.getGrossSalary() + " EUR");
-                output.write("<br>");
-                output.write("II Funded Pension = " + calculationResponse.getFundedPension() + " EUR");
-                output.write("<br>");
-                output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + " EUR");
-                output.write("<br>");
-                output.write("Income Tax = " + calculationResponse.getIncomeTax() + " EUR");
-                output.write("<br>");
-                output.write("Net Salary = " + calculationResponse.getNetSalary() + " EUR");
-                output.write("<br>");
+                printSalaryCalculationResponse(output, calculationResponse);
             }
             System.out.println(firstLine);
             while (input.ready()) {
@@ -89,7 +74,7 @@ public class Server {
                 output.write("<h1> ERROR 404</h1>\n");
                 return;
             }
-            output.write("HTTP/1.1 200 OK\n");
+            output.write(HTTP_200_OK);
             output.write("Content-Type: text/html, charset=utf-8\n");
             output.write("\n");
 
@@ -99,6 +84,28 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void printSalaryCalculationResponse(BufferedWriter output, ResultResponse calculationResponse) throws IOException {
+        output.write(HTTP_200_OK);
+        output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        output.write("\n");
+        output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + " EUR");
+        output.write("<br>");
+        output.write("Social Tax = " + calculationResponse.getSocialTax() + " EUR");
+        output.write("<br>");
+        output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + " EUR");
+        output.write("<br>");
+        output.write("Gross Salary = " + calculationResponse.getGrossSalary() + " EUR");
+        output.write("<br>");
+        output.write("II Funded Pension = " + calculationResponse.getFundedPension() + " EUR");
+        output.write("<br>");
+        output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + " EUR");
+        output.write("<br>");
+        output.write("Income Tax = " + calculationResponse.getIncomeTax() + " EUR");
+        output.write("<br>");
+        output.write("Net Salary = " + calculationResponse.getNetSalary() + " EUR");
+        output.write("<br>");
     }
 
     public static String generateId(String url) {
