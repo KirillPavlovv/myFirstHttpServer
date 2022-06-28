@@ -65,15 +65,8 @@ public class Server {
             while (input.ready()) {
                 System.out.println(input.readLine());
             }
-            Path path = Paths.get(".", lineParts[1]);
-            if (!Files.exists(path)) {
-                output.write("HTTP/1.1 404 NOT_FOUND\n");
-                output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-                output.write("\n");
-                output.write("<h1> URL NOT FOUND!</h1>\n");
-                output.write("<h1> ERROR 404</h1>\n");
-                return;
-            }
+            Path path = urlNotFound(output, lineParts);
+            if (path == null) return;
             output.write(HTTP_200_OK);
             output.write("Content-Type: text/html, charset=utf-8\n");
             output.write("\n");
@@ -86,6 +79,43 @@ public class Server {
         }
     }
 
+    public static String generateId(String url) {
+
+        List<String> stringList = getParametersFromUrl(url);
+        String[] splitBirthday = stringList.get(1).split("-");
+        StringBuilder stringBuilderBirthday = new StringBuilder();
+        for (String s : splitBirthday) {
+            stringBuilderBirthday.insert(0, s);
+            stringBuilderBirthday.insert(0, "-");
+        }
+        stringBuilderBirthday.delete(0, 1);
+        String birthday = stringBuilderBirthday.toString();
+
+        return new EstonianIdNumber(birthday, stringList.get(0)).generateIdNumber();
+    }
+
+
+    private static ResultResponse calculateSalary(String url) {
+        List<String> parametersFromUrl = getParametersFromUrl(url);
+        BigDecimal salary = new BigDecimal(parametersFromUrl.get(1));
+        if (parametersFromUrl.get(0).equals("netto")) {
+            return SalaryCalculation.calculate(new NetSalary(salary));
+        } else if (parametersFromUrl.get(0).equals("brutto")) {
+            return SalaryCalculation.calculate(new GrossSalary(salary));
+        } else {
+            return SalaryCalculation.calculate(new TotalCostsSalary(salary));
+        }
+    }
+
+    private static List<String> getParametersFromUrl(String parameters) {
+        String[] firstSplit = parameters.split("&");
+        List<String> stringList = new ArrayList<>();
+        for (String s : firstSplit) {
+            String[] split1 = s.split("=");
+            stringList.add(split1[1]);
+        }
+        return stringList;
+    }
     private static void printSalaryCalculationResponse(BufferedWriter output, ResultResponse calculationResponse) throws IOException {
         output.write(HTTP_200_OK);
         output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
@@ -108,41 +138,17 @@ public class Server {
         output.write("<br>");
     }
 
-    public static String generateId(String url) {
-
-        List<String> stringList = getParametersFromUrl(url);
-        String[] splitBirthday = stringList.get(1).split("-");
-        StringBuilder stringBuilderBirthday = new StringBuilder();
-        for (String s : splitBirthday) {
-            stringBuilderBirthday.insert(0, s);
-            stringBuilderBirthday.insert(0, "-");
+    private static Path urlNotFound(BufferedWriter output, String[] lineParts) throws IOException {
+        Path path = Paths.get(".", lineParts[1]);
+        if (!Files.exists(path)) {
+            output.write("HTTP/1.1 404 NOT_FOUND\n");
+            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+            output.write("\n");
+            output.write("<h1> URL NOT FOUND!</h1>\n");
+            output.write("<h1> ERROR 404</h1>\n");
+            return null;
         }
-        stringBuilderBirthday.delete(0, 1);
-        String birthday = stringBuilderBirthday.toString();
-
-        return new EstonianIdNumber(birthday, stringList.get(0)).generateIdNumber();
+        return path;
     }
 
-
-    public static ResultResponse calculateSalary(String url) {
-        List<String> parametersFromUrl = getParametersFromUrl(url);
-        BigDecimal salary = new BigDecimal(parametersFromUrl.get(1));
-        if (parametersFromUrl.get(0).equals("netto")) {
-            return SalaryCalculation.calculate(new NetSalary(salary));
-        } else if (parametersFromUrl.get(0).equals("brutto")) {
-            return SalaryCalculation.calculate(new GrossSalary(salary));
-        } else {
-            return SalaryCalculation.calculate(new TotalCostsSalary(salary));
-        }
-    }
-
-    private static List<String> getParametersFromUrl(String parameters) {
-        String[] firstSplit = parameters.split("&");
-        List<String> stringList = new ArrayList<>();
-        for (String s : firstSplit) {
-            String[] split1 = s.split("=");
-            stringList.add(split1[1]);
-        }
-        return stringList;
-    }
 }
