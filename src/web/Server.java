@@ -63,12 +63,9 @@ public class Server {
                 output.write("<h1> ERROR 404</h1>\n");
                 return;
             }
-
-
             output.write("HTTP/1.1 200 OK\n");
             output.write("Content-Type: text/html, charset=utf-8\n");
             output.write("\n");
-
 
             Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
 
