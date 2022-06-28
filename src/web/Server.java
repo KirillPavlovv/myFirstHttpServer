@@ -28,8 +28,10 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 System.out.println("Somebody is connected");
 
-                new Thread(() -> handleRequest(socket)).start();
+             new Thread(() -> handleRequest(socket)).start();
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,6 +64,7 @@ public class Server {
                 printSalaryCalculationResponse(output, calculationResponse);
             }
             System.out.println(firstLine);
+
             while (input.ready()) {
                 System.out.println(input.readLine());
             }
