@@ -7,6 +7,8 @@ import static java.math.RoundingMode.HALF_UP;
 
 class Constants {
 
+    private Constants() {
+    }
 
     public static final BigDecimal maxTaxFree = valueOf(500);
     public static final BigDecimal maxTaxFreeGrossSalary = valueOf(1200);

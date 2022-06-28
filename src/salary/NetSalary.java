@@ -9,7 +9,7 @@ import static salary.Constants.*;
 
 public class NetSalary extends Salary {
 
-    private BigDecimal netSalary;
+    private final BigDecimal netSalary;
 
     public NetSalary(BigDecimal netSalary) {
         this.netSalary = netSalary;

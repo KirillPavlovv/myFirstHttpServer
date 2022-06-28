@@ -3,31 +3,20 @@ package idnumber;
 
 public abstract class IdNumber {
 
-    private String idNumber;
+    private String personalCode;
     private String birthday;
     private String gender;
 
     protected IdNumber(String idNumber) {
-        this.idNumber = idNumber;
-    }
-
-    protected IdNumber() {
+        this.personalCode = idNumber;
     }
 
     public String getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
-    }
-
     public String getGender() {
         return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     protected IdNumber(String birthday, String gender) {
@@ -46,8 +35,8 @@ public abstract class IdNumber {
     public abstract String generateIdNumber();
 
 
-    public String getIdNumber() {
-        return idNumber;
+    public String getPersonalCode() {
+        return personalCode;
     }
 
 }

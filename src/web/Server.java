@@ -68,7 +68,7 @@ public class Server {
             Path path = Paths.get(".", lineParts[1]);
             if (!Files.exists(path)) {
                 output.write("HTTP/1.1 404 NOT_FOUND\n");
-                output.write("Content-Type: text/html, charset=utf-8\n");
+                output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
                 output.write("\n");
                 output.write("<h1> URL NOT FOUND!</h1>\n");
                 output.write("<h1> ERROR 404</h1>\n");
@@ -127,7 +127,6 @@ public class Server {
     public static ResultResponse calculateSalary(String url) {
         List<String> parametersFromUrl = getParametersFromUrl(url);
         BigDecimal salary = new BigDecimal(parametersFromUrl.get(1));
-        ResultResponse calculationResponse;
         if (parametersFromUrl.get(0).equals("netto")) {
             return SalaryCalculation.calculate(new NetSalary(salary));
         } else if (parametersFromUrl.get(0).equals("brutto")) {

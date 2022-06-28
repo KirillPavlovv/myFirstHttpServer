@@ -15,23 +15,6 @@ public class ResultResponse {
     BigDecimal incomeTax;
     BigDecimal netSalary;
 
-    public ResultResponse() {
-
-    }
-
-    public ResultResponse(BigDecimal totalCostForEmployer, BigDecimal socialTax, BigDecimal unemploymentInsuranceEmployer, BigDecimal grossSalary, BigDecimal fundedPension, BigDecimal unEmploymentInsuranceEmployee, BigDecimal incomeTax, BigDecimal netSalary) {
-        this.totalCostForEmployer = totalCostForEmployer;
-        this.socialTax = socialTax;
-        this.unemploymentInsuranceEmployer = unemploymentInsuranceEmployer;
-        this.grossSalary = grossSalary;
-        this.fundedPension = fundedPension;
-        this.unEmploymentInsuranceEmployee = unEmploymentInsuranceEmployee;
-        this.incomeTax = incomeTax;
-        this.netSalary = netSalary;
-    }
-
-//    public ResultResponse(GrossSalary grossSalary) {
-//    }
 
     @Override
     public boolean equals(Object o) {

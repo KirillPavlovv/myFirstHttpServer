@@ -17,10 +17,10 @@ public class EstonianIdNumber extends IdNumber {
     @Override
     public boolean validateIdNumber() {
 
-        if (getIdNumber().length() != 11) {                                                                                         // kas pikkus on 11 marki
+        if (getPersonalCode().length() != 11) {                                                                                         // kas pikkus on 11 marki
             return false;
         }
-        char[] idNumberChars = getIdNumber().toCharArray();
+        char[] idNumberChars = getPersonalCode().toCharArray();
 
         for (char idNumberChar : idNumberChars) {                                                                                   //kas koik on numbrid
             int a = (byte) idNumberChar;
@@ -28,7 +28,7 @@ public class EstonianIdNumber extends IdNumber {
                 return false;
             }
         }
-        if (Integer.parseInt(getIdNumber().substring(0, 1)) < 1 || Integer.parseInt(getIdNumber().substring(0, 1)) > 6) {             //kas esimene number on oige
+        if (Integer.parseInt(getPersonalCode().substring(0, 1)) < 1 || Integer.parseInt(getPersonalCode().substring(0, 1)) > 6) {             //kas esimene number on oige
             return false;
         }
 
@@ -49,7 +49,7 @@ public class EstonianIdNumber extends IdNumber {
     }
 
     public int findControlNumber() {
-        char[] idNumberChars = getIdNumber().toCharArray();
+        char[] idNumberChars = getPersonalCode().toCharArray();
         int[] firstStepCheck = {1, 2, 3, 4, 5, 6, 7, 8, 9, 1};
         int[] secondStepCheck = {3, 4, 5, 6, 7, 8, 9, 1, 2, 3};
         int sum = 0;
@@ -122,12 +122,12 @@ public class EstonianIdNumber extends IdNumber {
     }
 
     private IdNumberData getIdNumberData() {
-        int century = Integer.parseInt(getIdNumber().substring(0, 1));
-        int year = Integer.parseInt(getIdNumber().substring(1, 3));
-        int month = Integer.parseInt(getIdNumber().substring(3, 5));
-        int day = Integer.parseInt(getIdNumber().substring(5, 7));
-        int serialNumber = Integer.parseInt(getIdNumber().substring(7, 10));
-        int controlNumber = Integer.parseInt(getIdNumber().substring(10, 11));
+        int century = Integer.parseInt(getPersonalCode().substring(0, 1));
+        int year = Integer.parseInt(getPersonalCode().substring(1, 3));
+        int month = Integer.parseInt(getPersonalCode().substring(3, 5));
+        int day = Integer.parseInt(getPersonalCode().substring(5, 7));
+        int serialNumber = Integer.parseInt(getPersonalCode().substring(7, 10));
+        int controlNumber = Integer.parseInt(getPersonalCode().substring(10, 11));
         IdNumberData idNumberData = new IdNumberData(century, year, month, day, serialNumber, controlNumber);
         fixCentury(idNumberData);
         return idNumberData;

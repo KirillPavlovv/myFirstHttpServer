@@ -7,7 +7,7 @@ public class GrossSalary extends Salary {
     public GrossSalary(BigDecimal grossSalary) {
         this.grossSalary = grossSalary;
     }
-    private BigDecimal grossSalary;
+    private final BigDecimal grossSalary;
 
     @Override
     public  BigDecimal getGrossSalary() {

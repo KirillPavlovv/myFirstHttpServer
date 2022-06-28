@@ -9,8 +9,6 @@ public class IdNumberData {
     int day;
     int birthCounty;
     int controlNumber;
-    int gender;
-    String hyphen;
 
     public IdNumberData() {
     }
@@ -24,21 +22,10 @@ public class IdNumberData {
         this.controlNumber = controlNumber;
     }
 
-    public IdNumberData(int year, int month, int day, String hyphen, int birthCounty, int gender, int controlNumber) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.birthCounty = birthCounty;
-        this.controlNumber = controlNumber;
-        this.gender = gender;
-        this.hyphen = hyphen;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof IdNumberData)) return false;
-        IdNumberData that = (IdNumberData) o;
+        if (!(o instanceof IdNumberData that)) return false;
         return getCentury() == that.getCentury() && getYear() == that.getYear() && getMonth() == that.getMonth() && getDay() == that.getDay() && getBirthCounty() == that.getBirthCounty() && getControlNumber() == that.getControlNumber();
     }
 
@@ -107,19 +94,4 @@ public class IdNumberData {
         this.controlNumber = controlNumber;
     }
 
-    public int getGender() {
-        return gender;
-    }
-
-    public void setGender(int gender) {
-        this.gender = gender;
-    }
-
-    public String getHyphen() {
-        return hyphen;
-    }
-
-    public void setHyphen(String hyphen) {
-        this.hyphen = hyphen;
-    }
 }
