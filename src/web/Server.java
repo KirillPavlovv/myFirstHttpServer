@@ -21,6 +21,10 @@ public class Server {
     public static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
 
     public static void main(String[] args) throws InvalidPathException {
+        runServer();
+    }
+
+    private static void runServer() {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             System.out.println("Server is started ");
 
