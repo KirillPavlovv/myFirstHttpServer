@@ -53,36 +53,19 @@ public class Server {
             }
 
             String firstLine = input.readLine();
-            String[] lineParts = firstLine.split(" ");
-            String pathString = lineParts[1];
+            HttpRequest httpRequest = new HttpRequest(firstLine);
 
+            showMainPage(output, httpRequest.getPath());
 
-            if (pathString.equals("/")) {
-                output.write(HTTP_200_OK);
-                output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-                Files.newBufferedReader(Path.of("main.html"), StandardCharsets.UTF_8).transferTo(output);
-                output.write("\n");
-                output.close();
-            }
-
-            if (firstLine.contains("idgenerator")) {
-                String idNumber = generateId(lineParts[1]);
-                output.write(HTTP_200_OK);
-                output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-                output.write("\n");
-                output.write(idNumber + "\n");
-            }
-            if (firstLine.contains("salarycalculator")) {
-                ResultResponse calculationResponse = calculateSalary(lineParts[1]);
-                printSalaryCalculationResponse(output, calculationResponse);
-            }
+            checkUrlForIdGenerator(output, httpRequest.getPath());
+            checkUrlForSalaryCalculator(output, httpRequest.getPath());
 
             System.out.println(firstLine);
 
             while (input.ready()) {
-                System.out.println(input.readLine());
+                System.out.println(firstLine);
             }
-            Path path = urlNotFound(output, lineParts);
+            Path path = urlNotFound(output, httpRequest.getPath());
             if (path == null) return;
             output.write(HTTP_200_OK);
             output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
@@ -93,6 +76,33 @@ public class Server {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void showMainPage(BufferedWriter output, String path) throws IOException {
+        if (path.equals("/")) {
+            output.write(HTTP_200_OK);
+            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+            Files.newBufferedReader(Path.of("main.html"), StandardCharsets.UTF_8).transferTo(output);
+            output.write("\n");
+            output.close();
+        }
+    }
+
+    private static void checkUrlForSalaryCalculator(BufferedWriter output, String path) throws IOException {
+        if (path.contains("salarycalculator")) {
+            ResultResponse calculationResponse = calculateSalary(path);
+            printSalaryCalculationResponse(output, calculationResponse);
+        }
+    }
+
+    private static void checkUrlForIdGenerator(BufferedWriter output, String path) throws IOException {
+        if (path.contains("idgenerator")) {
+            String idNumber = generateId(path);
+            output.write(HTTP_200_OK);
+            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+            output.write("\n");
+            output.write(idNumber + "\n");
         }
     }
 
@@ -147,9 +157,9 @@ public class Server {
         output.write("Net Salary = " + calculationResponse.getNetSalary() + " EUR<br>");
     }
 
-    private static Path urlNotFound(BufferedWriter output, String[] lineParts) throws IOException {
-        Path path = Paths.get(".", lineParts[1]);
-        if (lineParts[1].contains("?")) {
+    private static Path urlNotFound(BufferedWriter output, String pathString) throws IOException {
+        Path path = Paths.get(".", pathString);
+        if (pathString.contains("?")) {
             return null;
         }
         if (!Files.exists(path)) {
