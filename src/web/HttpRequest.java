@@ -12,9 +12,8 @@ public class HttpRequest {
     public HttpRequest (String url) {
         String[] urlParts = url.split(" ");
         method = urlParts[0];
-        if (!(urlParts[1].contains("?"))) {
-            path = urlParts[1];
-        } else {
+        path = urlParts[1];
+        if (path.contains("?")) {
             String[] firstSplit = urlParts[1].split("&");
             List<String> stringList = new ArrayList<>();
             for (String s : firstSplit) {
@@ -25,7 +24,6 @@ public class HttpRequest {
             parameter2 = stringList.get(1);
         }
     }
-
 
     public String getMethod() {
         return method;

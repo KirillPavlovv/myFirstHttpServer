@@ -34,8 +34,6 @@ public class Server {
 
              new Thread(() -> handleRequest(socket)).start();
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,8 +61,9 @@ public class Server {
             System.out.println(firstLine);
 
             while (input.ready()) {
-                System.out.println(firstLine);
+                System.out.println(input.readLine());
             }
+
             Path path = urlNotFound(output, httpRequest.getPath());
             if (path == null) return;
             output.write(HTTP_200_OK);
@@ -72,7 +71,6 @@ public class Server {
             output.write("\n");
 
             Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
-
 
         } catch (IOException e) {
             e.printStackTrace();
