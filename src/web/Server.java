@@ -62,7 +62,6 @@ public class Server {
                 output.write(HTTP_200_OK);
                 output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
                 output.write("\n");
-
                 Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
             }
 
