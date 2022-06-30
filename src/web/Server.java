@@ -75,7 +75,7 @@ public class Server {
             Path path = urlNotFound(output, lineParts);
             if (path == null) return;
             output.write(HTTP_200_OK);
-            output.write("Content-Type: text/html, charset=utf-8\n");
+            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
             output.write("\n");
 
             Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
