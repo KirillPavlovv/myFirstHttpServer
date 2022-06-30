@@ -127,22 +127,14 @@ public class Server {
         output.write(HTTP_200_OK);
         output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
         output.write("\n");
-        output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + " EUR");
-        output.write("<br>");
-        output.write("Social Tax = " + calculationResponse.getSocialTax() + " EUR");
-        output.write("<br>");
-        output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + " EUR");
-        output.write("<br>");
-        output.write("Gross Salary = " + calculationResponse.getGrossSalary() + " EUR");
-        output.write("<br>");
-        output.write("II Funded Pension = " + calculationResponse.getFundedPension() + " EUR");
-        output.write("<br>");
-        output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + " EUR");
-        output.write("<br>");
-        output.write("Income Tax = " + calculationResponse.getIncomeTax() + " EUR");
-        output.write("<br>");
-        output.write("Net Salary = " + calculationResponse.getNetSalary() + " EUR");
-        output.write("<br>");
+        output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + " EUR<br>");
+        output.write("Social Tax = " + calculationResponse.getSocialTax() + " EUR<br>");
+        output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + " EUR<br>");
+        output.write("Gross Salary = " + calculationResponse.getGrossSalary() + " EUR<br>");
+        output.write("II Funded Pension = " + calculationResponse.getFundedPension() + " EUR<br>");
+        output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + " EUR<br>");
+        output.write("Income Tax = " + calculationResponse.getIncomeTax() + " EUR<br>");
+        output.write("Net Salary = " + calculationResponse.getNetSalary() + " EUR<br>");
     }
 
     private static Path urlNotFound(BufferedWriter output, String[] lineParts) throws IOException {
