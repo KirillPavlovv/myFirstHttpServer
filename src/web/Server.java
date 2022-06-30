@@ -12,8 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Server {
 
@@ -50,28 +48,29 @@ public class Server {
             while (true) {
                 if (input.ready()) break;
             }
-
             String firstLine = input.readLine();
             HttpRequest httpRequest = new HttpRequest(firstLine);
 
             showMainPage(output, httpRequest.getPath());
 
-            checkUrlForIdGenerator(output, httpRequest);
-            checkUrlForSalaryCalculator(output, httpRequest);
+            if (httpRequest.getPath().contains("?")) {
+                checkUrlForIdGenerator(output, httpRequest);
+                checkUrlForSalaryCalculator(output, httpRequest);
+            } else {
+                Path path = urlNotFound(output, httpRequest.getPath());
+                if (path == null) return;
+                output.write(HTTP_200_OK);
+                output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+                output.write("\n");
+
+                Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
+            }
 
             System.out.println(firstLine);
 
             while (input.ready()) {
                 System.out.println(input.readLine());
             }
-
-            Path path = urlNotFound(output, httpRequest.getPath());
-            if (path == null) return;
-            output.write(HTTP_200_OK);
-            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-            output.write("\n");
-
-            Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
 
         } catch (IOException e) {
             e.printStackTrace();
