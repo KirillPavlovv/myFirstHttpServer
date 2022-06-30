@@ -56,8 +56,8 @@ public class Server {
 
             showMainPage(output, httpRequest.getPath());
 
-            checkUrlForIdGenerator(output, httpRequest.getPath());
-            checkUrlForSalaryCalculator(output, httpRequest.getPath());
+            checkUrlForIdGenerator(output, httpRequest);
+            checkUrlForSalaryCalculator(output, httpRequest);
 
             System.out.println(firstLine);
 
@@ -88,16 +88,16 @@ public class Server {
         }
     }
 
-    private static void checkUrlForSalaryCalculator(BufferedWriter output, String path) throws IOException {
-        if (path.contains("salarycalculator")) {
-            ResultResponse calculationResponse = calculateSalary(path);
+    private static void checkUrlForSalaryCalculator(BufferedWriter output, HttpRequest httpRequest) throws IOException {
+        if (httpRequest.getPath().contains("salarycalculator")) {
+            ResultResponse calculationResponse = calculateSalary(httpRequest);
             printSalaryCalculationResponse(output, calculationResponse);
         }
     }
 
-    private static void checkUrlForIdGenerator(BufferedWriter output, String path) throws IOException {
-        if (path.contains("idgenerator")) {
-            String idNumber = generateId(path);
+    private static void checkUrlForIdGenerator(BufferedWriter output, HttpRequest httpRequest) throws IOException {
+        if (httpRequest.getPath().contains("idgenerator")) {
+            String idNumber = generateId(httpRequest);
             output.write(HTTP_200_OK);
             output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
             output.write("\n");
@@ -105,10 +105,9 @@ public class Server {
         }
     }
 
-    public static String generateId(String url) {
+    public static String generateId(HttpRequest httpRequest) {
 
-        List<String> stringList = getParametersFromUrl(url);
-        String[] splitBirthday = stringList.get(1).split("-");
+        String[] splitBirthday = httpRequest.getParameter2().split("-");
         StringBuilder stringBuilderBirthday = new StringBuilder();
         for (String s : splitBirthday) {
             stringBuilderBirthday.insert(0, s);
@@ -117,31 +116,21 @@ public class Server {
         stringBuilderBirthday.delete(0, 1);
         String birthday = stringBuilderBirthday.toString();
 
-        return new EstonianIdNumber(birthday, stringList.get(0)).generateIdNumber();
+        return new EstonianIdNumber(birthday, httpRequest.getParameter1()).generateIdNumber();
     }
 
 
-    private static ResultResponse calculateSalary(String url) {
-        List<String> parametersFromUrl = getParametersFromUrl(url);
-        BigDecimal salary = new BigDecimal(parametersFromUrl.get(1));
-        if (parametersFromUrl.get(0).equals("netto")) {
+    private static ResultResponse calculateSalary(HttpRequest httpRequest) {
+        BigDecimal salary = new BigDecimal(httpRequest.getParameter2());
+        if (httpRequest.getParameter1().equals("netto")) {
             return SalaryCalculation.calculate(new NetSalary(salary));
-        } else if (parametersFromUrl.get(0).equals("brutto")) {
+        } else if (httpRequest.getParameter1().equals("brutto")) {
             return SalaryCalculation.calculate(new GrossSalary(salary));
         } else {
             return SalaryCalculation.calculate(new TotalCostsSalary(salary));
         }
     }
 
-    private static List<String> getParametersFromUrl(String parameters) {
-        String[] firstSplit = parameters.split("&");
-        List<String> stringList = new ArrayList<>();
-        for (String s : firstSplit) {
-            String[] split1 = s.split("=");
-            stringList.add(split1[1]);
-        }
-        return stringList;
-    }
     private static void printSalaryCalculationResponse(BufferedWriter output, ResultResponse calculationResponse) throws IOException {
         output.write(HTTP_200_OK);
         output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
