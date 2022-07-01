@@ -48,7 +48,6 @@ public class ServerService {
         HttpRequest httpRequest = new HttpRequest(firstLine);
 
         System.out.println(firstLine);
-
         while (phone.ready()) {
             System.out.println(phone.readLine());
         }
