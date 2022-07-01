@@ -18,6 +18,7 @@ public class Server {
     public static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
     public static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
     public static final String EUR_BR = " EUR<br>";
+    public static final String DEFAULT_PAGE = "main.html";
 
     public static void main(String[] args) throws InvalidPathException {
         runServer();
@@ -91,7 +92,7 @@ public class Server {
         if (path.equals("/")) {
             output.write(HTTP_200_OK);
             output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-            Files.newBufferedReader(Path.of("main.html"), StandardCharsets.UTF_8).transferTo(output);
+            Files.newBufferedReader(Path.of(DEFAULT_PAGE), StandardCharsets.UTF_8).transferTo(output);
             output.write("\n");
             output.close();
         }
@@ -116,9 +117,6 @@ public class Server {
 
     private static Path urlNotFound(BufferedWriter output, String pathString) throws IOException {
         Path path = Paths.get(".", pathString);
-        if (pathString.contains("?")) {
-            return null;
-        }
         if (!Files.exists(path)) {
             output.write("HTTP/1.1 404 NOT_FOUND\n");
             output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
