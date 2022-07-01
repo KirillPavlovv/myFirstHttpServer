@@ -4,9 +4,9 @@ import idnumber.IdService;
 import salary.ResultResponse;
 import salary.SalaryCalculation;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -29,54 +29,48 @@ public class Server {
             System.out.println("Server is started ");
 
             while (true) {
-                Socket socket = serverSocket.accept();
+                Phone phone = new Phone(serverSocket);
                 System.out.println("Somebody is connected");
 
-             new Thread(() -> handleRequest(socket)).start();
+                new Thread(() -> handleRequest(phone)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void handleRequest(Socket socket) {
+    private static void handleRequest(Phone phone) {
 
-        try (BufferedReader input = new BufferedReader(
-                new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
-        ) {
-            while (true) {
-                if (input.ready()) break;
-            }
-            String firstLine = input.readLine();
-            HttpRequest httpRequest = new HttpRequest(firstLine);
+        phone.createStreams();
 
-            System.out.println(firstLine);
+        while (true) {
+            if (phone.ready()) break;
+        }
+        String firstLine = phone.readLine();
+        HttpRequest httpRequest = new HttpRequest(firstLine);
 
-            while (input.ready()) {
-                System.out.println(input.readLine());
-            }
+        System.out.println(firstLine);
 
-            if (httpRequest.getMethod().equals("GET")) {
-                handleGetRequest(output, httpRequest, socket);
-            }
+        while (phone.ready()) {
+            System.out.println(phone.readLine());
+        }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (httpRequest.getMethod().equals("GET")) {
+            handleGetRequest(phone, httpRequest);
         }
     }
 
-    private static void handleGetRequest(BufferedWriter output, HttpRequest httpRequest, Socket socket) {
+    private static void handleGetRequest(Phone phone, HttpRequest httpRequest) {
         try {
-            showDefaultPage(output, httpRequest.getPath());
+            showDefaultPage(phone, httpRequest.getPath());
 
             if (httpRequest.getPath().contains("?")) {
-                checkUrlForIdGenerator(output, httpRequest);
-                checkUrlForSalaryCalculator(output, httpRequest);
+                checkUrlForIdGenerator(phone, httpRequest);
+                checkUrlForSalaryCalculator(phone, httpRequest);
             } else {
-                Path path = urlNotFound(output, httpRequest.getPath());
+                Path path = urlNotFound(phone, httpRequest.getPath());
                 if (path == null) return;
-                getAvailableFile(socket, path);
+                getAvailableFile(phone, path);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -84,52 +78,52 @@ public class Server {
 
     }
 
-    private static void getAvailableFile(Socket socket, Path path) throws IOException {
-        OutputStream out = socket.getOutputStream();
+    private static void getAvailableFile(Phone phone, Path path) throws IOException {
+        OutputStream out = phone.getClientSocket().getOutputStream();
         String contentType = getContentType(path);
         out.write((HTTP_200_OK).getBytes(StandardCharsets.UTF_8));
         out.write(("Content-Type: " + contentType + "\n").getBytes(StandardCharsets.UTF_8));
         out.write(("\n").getBytes(StandardCharsets.UTF_8));
         out.write(Files.readAllBytes(path));
         out.flush();
-        socket.close();
+        phone.getClientSocket().close();
     }
 
-    private static void showDefaultPage(BufferedWriter output, String path) throws IOException {
+    private static void showDefaultPage(Phone phone, String path) {
         if (path.equals("/")) {
-            output.write(HTTP_200_OK);
-            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-            Files.newBufferedReader(Path.of(DEFAULT_PAGE), StandardCharsets.UTF_8).transferTo(output);
-            output.write("\n");
-            output.close();
+            phone.writeOut(HTTP_200_OK);
+            phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+            phone.transfer(Path.of(DEFAULT_PAGE));
+            phone.writeOut("\n");
+            phone.close();
         }
     }
 
-    private static void checkUrlForSalaryCalculator(BufferedWriter output, HttpRequest httpRequest) throws IOException {
+    private static void checkUrlForSalaryCalculator(Phone phone, HttpRequest httpRequest) {
         if (httpRequest.getPath().contains("salarycalculator")) {
             ResultResponse calculationResponse = SalaryCalculation.calculateSalary(httpRequest);
-            printSalaryCalculationResponse(output, calculationResponse);
+            printSalaryCalculationResponse(phone, calculationResponse);
         }
     }
 
-    private static void checkUrlForIdGenerator(BufferedWriter output, HttpRequest httpRequest) throws IOException {
+    private static void checkUrlForIdGenerator(Phone phone, HttpRequest httpRequest) {
         if (httpRequest.getPath().contains("idgenerator")) {
             String idNumber = IdService.generateId(httpRequest);
-            output.write(HTTP_200_OK);
-            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-            output.write("\n");
-            output.write(idNumber + "\n");
+            phone.writeOut(HTTP_200_OK);
+            phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+            phone.writeOut("\n");
+            phone.writeOut(idNumber + "\n");
         }
     }
 
-    private static Path urlNotFound(BufferedWriter output, String pathString) throws IOException {
+    private static Path urlNotFound(Phone phone, String pathString) {
         Path path = Paths.get(".", pathString);
         if (!Files.exists(path)) {
-            output.write("HTTP/1.1 404 NOT_FOUND\n");
-            output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-            output.write("\n");
-            output.write("<h1> URL NOT FOUND!</h1>\n");
-            output.write("<h1> ERROR 404</h1>\n");
+            phone.writeOut("HTTP/1.1 404 NOT_FOUND\n");
+            phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+            phone.writeOut("\n");
+            phone.writeOut("<h1> URL NOT FOUND!</h1>\n");
+            phone.writeOut("<h1> ERROR 404</h1>\n");
             return null;
         }
         return path;
@@ -139,18 +133,18 @@ public class Server {
         return Files.probeContentType(path);
     }
 
-    private static void printSalaryCalculationResponse(BufferedWriter output, ResultResponse calculationResponse) throws IOException {
-        output.write(HTTP_200_OK);
-        output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-        output.write("\n");
-        output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + EUR_BR);
-        output.write("Social Tax = " + calculationResponse.getSocialTax() + EUR_BR);
-        output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + EUR_BR);
-        output.write("Gross Salary = " + calculationResponse.getGrossSalary() + EUR_BR);
-        output.write("II Funded Pension = " + calculationResponse.getFundedPension() + EUR_BR);
-        output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + EUR_BR);
-        output.write("Income Tax = " + calculationResponse.getIncomeTax() + EUR_BR);
-        output.write("Net Salary = " + calculationResponse.getNetSalary() + EUR_BR);
+    private static void printSalaryCalculationResponse(Phone phone, ResultResponse calculationResponse) {
+        phone.writeOut(HTTP_200_OK);
+        phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        phone.writeOut("\n");
+        phone.writeOut("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + EUR_BR);
+        phone.writeOut("Social Tax = " + calculationResponse.getSocialTax() + EUR_BR);
+        phone.writeOut("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + EUR_BR);
+        phone.writeOut("Gross Salary = " + calculationResponse.getGrossSalary() + EUR_BR);
+        phone.writeOut("II Funded Pension = " + calculationResponse.getFundedPension() + EUR_BR);
+        phone.writeOut("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + EUR_BR);
+        phone.writeOut("Income Tax = " + calculationResponse.getIncomeTax() + EUR_BR);
+        phone.writeOut("Net Salary = " + calculationResponse.getNetSalary() + EUR_BR);
     }
 
 }
