@@ -9,26 +9,9 @@ import java.nio.file.Path;
 
 public class Phone extends Writer {
 
-//    private ServerSocket serverSocket;
     private Socket clientSocket;
     private BufferedReader input;
     private BufferedWriter output;
-
-//    public Phone(String port) {
-//        try {
-//            serverSocket = new ServerSocket(Integer.parseInt(port));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    public void accept() {
-//        try {
-//            clientSocket = serverSocket.accept();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public Phone(ServerSocket serverSocket) {
         try {
@@ -39,10 +22,6 @@ public class Phone extends Writer {
         System.out.println("Somebody is connected");
     }
 
-
-    public BufferedWriter getOutput() {
-        return output;
-    }
 
     public void createStreams() {
         try {
@@ -81,7 +60,7 @@ public class Phone extends Writer {
     }
 
     @Override
-    public void write(char[] cbuf, int off, int len) throws IOException {
+    public void write(char[] cbuf, int off, int len){
 
     }
 
@@ -99,7 +78,7 @@ public class Phone extends Writer {
     }
 
     @Override
-    public void flush() throws IOException {
+    public void flush() {
 
     }
 
