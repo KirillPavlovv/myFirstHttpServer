@@ -51,14 +51,14 @@ public class Server {
             String firstLine = input.readLine();
             HttpRequest httpRequest = new HttpRequest(firstLine);
 
-            if (httpRequest.getMethod().equals("GET")) {
-                handleGetRequest(output, httpRequest);
-            }
-
             System.out.println(firstLine);
 
             while (input.ready()) {
                 System.out.println(input.readLine());
+            }
+
+            if (httpRequest.getMethod().equals("GET")) {
+                handleGetRequest(output, httpRequest);
             }
 
         } catch (IOException e) {
