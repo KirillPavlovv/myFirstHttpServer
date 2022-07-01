@@ -12,6 +12,7 @@ public class Phone extends Writer {
     private Socket clientSocket;
     private BufferedReader input;
     private BufferedWriter output;
+    private OutputStream fileOutput;
 
     public Phone(ServerSocket serverSocket) {
         try {
@@ -31,6 +32,16 @@ public class Phone extends Writer {
             e.printStackTrace();
         }
     }
+
+    public void createFileOutputStream() {
+        try {
+            fileOutput = clientSocket.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     public String readLine() {
         try {
@@ -62,6 +73,22 @@ public class Phone extends Writer {
     @Override
     public void write(char[] cbuf, int off, int len){
 
+    }
+
+    public void write(String message) {
+        try {
+            fileOutput.write((message).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void write(Path path) {
+        try {
+            fileOutput.write(Files.readAllBytes(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Socket getClientSocket() {

@@ -5,15 +5,13 @@ import salary.ResultResponse;
 import salary.SalaryCalculation;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Server {
+public class ServerService {
 
     public static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
     public static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
@@ -75,17 +73,16 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private static void getAvailableFile(Phone phone, Path path) throws IOException {
-        OutputStream out = phone.getClientSocket().getOutputStream();
+        phone.createFileOutputStream();
         String contentType = getContentType(path);
-        out.write((HTTP_200_OK).getBytes(StandardCharsets.UTF_8));
-        out.write(("Content-Type: " + contentType + "\n").getBytes(StandardCharsets.UTF_8));
-        out.write(("\n").getBytes(StandardCharsets.UTF_8));
-        out.write(Files.readAllBytes(path));
-        out.flush();
+        phone.write((HTTP_200_OK));
+        phone.write(("Content-Type: " + contentType + "\n"));
+        phone.write(("\n"));
+        phone.write(path);
+        phone.flush();
         phone.getClientSocket().close();
     }
 
