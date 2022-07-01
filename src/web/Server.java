@@ -42,8 +42,7 @@ public class Server {
 
         try (BufferedReader input = new BufferedReader(
                 new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
-
+             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         ) {
             while (true) {
                 if (input.ready()) break;
@@ -51,6 +50,23 @@ public class Server {
             String firstLine = input.readLine();
             HttpRequest httpRequest = new HttpRequest(firstLine);
 
+            if (httpRequest.getMethod().equals("GET")) {
+                handleGetRequest(output, httpRequest);
+            }
+
+            System.out.println(firstLine);
+
+            while (input.ready()) {
+                System.out.println(input.readLine());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void handleGetRequest(BufferedWriter output, HttpRequest httpRequest) {
+        try {
             showMainPage(output, httpRequest.getPath());
 
             if (httpRequest.getPath().contains("?")) {
@@ -64,16 +80,10 @@ public class Server {
                 output.write("\n");
                 Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
             }
-
-            System.out.println(firstLine);
-
-            while (input.ready()) {
-                System.out.println(input.readLine());
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private static void showMainPage(BufferedWriter output, String path) throws IOException {
