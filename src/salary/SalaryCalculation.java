@@ -1,5 +1,7 @@
 package salary;
 
+import web.HttpRequest;
+
 import java.math.BigDecimal;
 
 import static java.math.BigDecimal.ZERO;
@@ -43,4 +45,17 @@ public class SalaryCalculation {
         BigDecimal grossSalary = salary.getGrossSalary();
         return calculate(grossSalary);
     }
+
+    public static ResultResponse calculateSalary(HttpRequest httpRequest) {
+        BigDecimal salary = new BigDecimal(httpRequest.getParameter2());
+        if (httpRequest.getParameter1().equals("netto")) {
+            return SalaryCalculation.calculate(new NetSalary(salary));
+        } else if (httpRequest.getParameter1().equals("brutto")) {
+            return SalaryCalculation.calculate(new GrossSalary(salary));
+        } else {
+            return SalaryCalculation.calculate(new TotalCostsSalary(salary));
+        }
+    }
+
+
 }

@@ -1,10 +1,10 @@
 package web;
 
-import idnumber.EstonianIdNumber;
-import salary.*;
+import idnumber.IdService;
+import salary.ResultResponse;
+import salary.SalaryCalculation;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -67,7 +67,7 @@ public class Server {
 
     private static void handleGetRequest(BufferedWriter output, HttpRequest httpRequest) {
         try {
-            showMainPage(output, httpRequest.getPath());
+            showDefaultPage(output, httpRequest.getPath());
 
             if (httpRequest.getPath().contains("?")) {
                 checkUrlForIdGenerator(output, httpRequest);
@@ -75,8 +75,9 @@ public class Server {
             } else {
                 Path path = urlNotFound(output, httpRequest.getPath());
                 if (path == null) return;
+                String contentType = getContentType(path);
                 output.write(HTTP_200_OK);
-                output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+                output.write("Content-Type: " + contentType + "\n");
                 output.write("\n");
                 Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
             }
@@ -86,7 +87,7 @@ public class Server {
 
     }
 
-    private static void showMainPage(BufferedWriter output, String path) throws IOException {
+    private static void showDefaultPage(BufferedWriter output, String path) throws IOException {
         if (path.equals("/")) {
             output.write(HTTP_200_OK);
             output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
@@ -98,59 +99,19 @@ public class Server {
 
     private static void checkUrlForSalaryCalculator(BufferedWriter output, HttpRequest httpRequest) throws IOException {
         if (httpRequest.getPath().contains("salarycalculator")) {
-            ResultResponse calculationResponse = calculateSalary(httpRequest);
+            ResultResponse calculationResponse = SalaryCalculation.calculateSalary(httpRequest);
             printSalaryCalculationResponse(output, calculationResponse);
         }
     }
 
     private static void checkUrlForIdGenerator(BufferedWriter output, HttpRequest httpRequest) throws IOException {
         if (httpRequest.getPath().contains("idgenerator")) {
-            String idNumber = generateId(httpRequest);
+            String idNumber = IdService.generateId(httpRequest);
             output.write(HTTP_200_OK);
             output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
             output.write("\n");
             output.write(idNumber + "\n");
         }
-    }
-
-    public static String generateId(HttpRequest httpRequest) {
-
-        String[] splitBirthday = httpRequest.getParameter2().split("-");
-        StringBuilder stringBuilderBirthday = new StringBuilder();
-        for (String s : splitBirthday) {
-            stringBuilderBirthday.insert(0, s);
-            stringBuilderBirthday.insert(0, "-");
-        }
-        stringBuilderBirthday.delete(0, 1);
-        String birthday = stringBuilderBirthday.toString();
-
-        return new EstonianIdNumber(birthday, httpRequest.getParameter1()).generateIdNumber();
-    }
-
-
-    private static ResultResponse calculateSalary(HttpRequest httpRequest) {
-        BigDecimal salary = new BigDecimal(httpRequest.getParameter2());
-        if (httpRequest.getParameter1().equals("netto")) {
-            return SalaryCalculation.calculate(new NetSalary(salary));
-        } else if (httpRequest.getParameter1().equals("brutto")) {
-            return SalaryCalculation.calculate(new GrossSalary(salary));
-        } else {
-            return SalaryCalculation.calculate(new TotalCostsSalary(salary));
-        }
-    }
-
-    private static void printSalaryCalculationResponse(BufferedWriter output, ResultResponse calculationResponse) throws IOException {
-        output.write(HTTP_200_OK);
-        output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-        output.write("\n");
-        output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + EUR_BR);
-        output.write("Social Tax = " + calculationResponse.getSocialTax() + EUR_BR);
-        output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + EUR_BR);
-        output.write("Gross Salary = " + calculationResponse.getGrossSalary() + EUR_BR);
-        output.write("II Funded Pension = " + calculationResponse.getFundedPension() + EUR_BR);
-        output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + EUR_BR);
-        output.write("Income Tax = " + calculationResponse.getIncomeTax() + EUR_BR);
-        output.write("Net Salary = " + calculationResponse.getNetSalary() + EUR_BR);
     }
 
     private static Path urlNotFound(BufferedWriter output, String pathString) throws IOException {
@@ -167,6 +128,24 @@ public class Server {
             return null;
         }
         return path;
+    }
+
+    private static String getContentType(Path path) throws IOException {
+        return Files.probeContentType(path);
+    }
+
+    private static void printSalaryCalculationResponse(BufferedWriter output, ResultResponse calculationResponse) throws IOException {
+        output.write(HTTP_200_OK);
+        output.write(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        output.write("\n");
+        output.write("Total costs for Employer = " + calculationResponse.getTotalCostForEmployer() + EUR_BR);
+        output.write("Social Tax = " + calculationResponse.getSocialTax() + EUR_BR);
+        output.write("Unemployment Insurance Tax for Employer = " + calculationResponse.getUnemploymentInsuranceEmployer() + EUR_BR);
+        output.write("Gross Salary = " + calculationResponse.getGrossSalary() + EUR_BR);
+        output.write("II Funded Pension = " + calculationResponse.getFundedPension() + EUR_BR);
+        output.write("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + EUR_BR);
+        output.write("Income Tax = " + calculationResponse.getIncomeTax() + EUR_BR);
+        output.write("Net Salary = " + calculationResponse.getNetSalary() + EUR_BR);
     }
 
 }
