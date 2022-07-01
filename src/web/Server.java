@@ -43,7 +43,7 @@ public class Server {
 
         try (BufferedReader input = new BufferedReader(
                 new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+             BufferedWriter output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))
         ) {
             while (true) {
                 if (input.ready()) break;
@@ -58,7 +58,7 @@ public class Server {
             }
 
             if (httpRequest.getMethod().equals("GET")) {
-                handleGetRequest(output, httpRequest);
+                handleGetRequest(output, httpRequest, socket);
             }
 
         } catch (IOException e) {
@@ -66,7 +66,7 @@ public class Server {
         }
     }
 
-    private static void handleGetRequest(BufferedWriter output, HttpRequest httpRequest) {
+    private static void handleGetRequest(BufferedWriter output, HttpRequest httpRequest, Socket socket) {
         try {
             showDefaultPage(output, httpRequest.getPath());
 
@@ -76,16 +76,23 @@ public class Server {
             } else {
                 Path path = urlNotFound(output, httpRequest.getPath());
                 if (path == null) return;
-                String contentType = getContentType(path);
-                output.write(HTTP_200_OK);
-                output.write("Content-Type: " + contentType + "\n");
-                output.write("\n");
-                Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
+                getAvailableFile(socket, path);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private static void getAvailableFile(Socket socket, Path path) throws IOException {
+        OutputStream out = socket.getOutputStream();
+        String contentType = getContentType(path);
+        out.write((HTTP_200_OK).getBytes(StandardCharsets.UTF_8));
+        out.write(("Content-Type: " + contentType + "\n").getBytes(StandardCharsets.UTF_8));
+        out.write(("\n").getBytes(StandardCharsets.UTF_8));
+        out.write(Files.readAllBytes(path));
+        out.flush();
+        socket.close();
     }
 
     private static void showDefaultPage(BufferedWriter output, String path) throws IOException {
