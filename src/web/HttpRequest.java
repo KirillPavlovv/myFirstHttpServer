@@ -21,7 +21,7 @@ public class HttpRequest {
         for (String s : firstUrlPathSplit) {
             String[] secondUrlPathSplit = s.split("=");
             if (secondUrlPathSplit.length == 1) {
-                ServerService.badRequest(phone);
+                HttpResponseService.badRequest(phone);
             } else {
                 stringList.add(secondUrlPathSplit[1]);
             }
