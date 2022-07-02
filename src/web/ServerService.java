@@ -132,7 +132,6 @@ public class ServerService {
         return path;
     }
 
-
     public static void badRequest(Phone phone) {
         phone.writeOut("HTTP/1.1 400 BAD_REQUEST\n");
         phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
