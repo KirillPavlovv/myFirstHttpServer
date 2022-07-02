@@ -23,7 +23,6 @@ public class Phone extends Writer {
         System.out.println("Somebody is connected");
     }
 
-
     public void createStreams() {
         try {
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -41,8 +40,6 @@ public class Phone extends Writer {
         }
     }
 
-
-
     public String readLine() {
         try {
             return input.readLine();
@@ -51,7 +48,6 @@ public class Phone extends Writer {
         }
         return "";
     }
-
 
     public boolean ready() {
         try {
@@ -82,10 +78,6 @@ public class Phone extends Writer {
             e.printStackTrace();
         }
     }
-
-//    public void write(JSONObject jsonObject) {
-//        fileOutput.write(jsonObject.toString());
-//    }
 
     public void write(Path path) {
         try {

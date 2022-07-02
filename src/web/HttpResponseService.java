@@ -10,7 +10,6 @@ public class HttpResponseService {
 
     public static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
     public static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
-    public static final String EUR_BR = " EUR<br>";
     public static final String DEFAULT_PAGE = "main.html";
 
     static void fileResponse(Phone phone, Path path, String contentType) {
@@ -20,7 +19,6 @@ public class HttpResponseService {
         phone.write(path);
         phone.flush();
     }
-
 
     static void showDefaultPage(Phone phone) {
         phone.writeOut(HTTP_200_OK);

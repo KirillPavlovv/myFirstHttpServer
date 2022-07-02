@@ -33,20 +33,16 @@ public class ServerService {
     }
 
     private static void handleRequest(Phone phone) {
-
         phone.createStreams();
-
         while (true) {
             if (phone.ready()) break;
         }
         String firstLine = phone.readLine();
         HttpRequest httpRequest = new HttpRequest(firstLine);
-
         System.out.println(firstLine);
         while (phone.ready()) {
             System.out.println(phone.readLine());
         }
-
         if (httpRequest.getMethod().equals("GET")) {
             handleGetRequest(phone, httpRequest);
         }
