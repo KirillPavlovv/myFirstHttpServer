@@ -32,6 +32,15 @@ public class HttpRequest {
         }
     }
 
+    public boolean hasParameters() {
+        if (parameter2 == null) {
+            return false;
+        } else if (parameter1 == null) {
+            return false;
+        }
+        return true;
+    }
+
     public String getMethod() {
         return method;
     }

@@ -74,8 +74,10 @@ public class ServerService {
 
     private static void handleRequestParameters(Phone phone, HttpRequest httpRequest) {
         httpRequest.setRequestParameters(phone);
-        checkUrlForIdGenerator(phone, httpRequest);
-        checkUrlForSalaryCalculator(phone, httpRequest);
+        if ((httpRequest.hasParameters())) {
+            checkUrlForIdGenerator(phone, httpRequest);
+            checkUrlForSalaryCalculator(phone, httpRequest);
+        }
     }
 
     private static void getAvailableFile(Phone phone, Path path) throws IOException {
@@ -90,10 +92,11 @@ public class ServerService {
     }
 
     private static void showDefaultPage(Phone phone, String path) {
-            phone.writeOut(HTTP_200_OK);
-            phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-            phone.transfer(Path.of(DEFAULT_PAGE));
-            phone.writeOut("\n");
+        phone.writeOut(HTTP_200_OK);
+        phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        phone.transfer(Path.of(DEFAULT_PAGE));
+        phone.writeOut("\n");
+        phone.close();
 
     }
 
@@ -111,6 +114,7 @@ public class ServerService {
             phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
             phone.writeOut("\n");
             phone.writeOut(idNumber + "\n");
+            phone.close();
         }
     }
 
@@ -122,6 +126,7 @@ public class ServerService {
             phone.writeOut("\n");
             phone.writeOut("<h1> URL NOT FOUND!</h1>\n");
             phone.writeOut("<h1> ERROR 404</h1>\n");
+            phone.close();
             return null;
         }
         return path;
@@ -153,6 +158,7 @@ public class ServerService {
         phone.writeOut("Unemployment Insurance Tax for Employee = " + calculationResponse.getUnEmploymentInsuranceEmployee() + EUR_BR);
         phone.writeOut("Income Tax = " + calculationResponse.getIncomeTax() + EUR_BR);
         phone.writeOut("Net Salary = " + calculationResponse.getNetSalary() + EUR_BR);
+        phone.close();
     }
 
 }
