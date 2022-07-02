@@ -83,6 +83,10 @@ public class Phone extends Writer {
         }
     }
 
+//    public void write(JSONObject jsonObject) {
+//        fileOutput.write(jsonObject.toString());
+//    }
+
     public void write(Path path) {
         try {
             fileOutput.write(Files.readAllBytes(path));
