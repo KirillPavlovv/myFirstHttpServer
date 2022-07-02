@@ -61,7 +61,7 @@ public class ServerService {
             if (httpRequest.getPath().contains("?")) {
                 handleRequestParameters(phone, httpRequest);
             } else if (httpRequest.getPath().equals("/")) {
-                showDefaultPage(phone, httpRequest.getPath());
+                showDefaultPage(phone);
             } else {
                 Path path = urlNotFound(phone, httpRequest.getPath());
                 if (path == null) return;
@@ -91,7 +91,7 @@ public class ServerService {
         phone.getClientSocket().close();
     }
 
-    private static void showDefaultPage(Phone phone, String path) {
+    private static void showDefaultPage(Phone phone) {
         phone.writeOut(HTTP_200_OK);
         phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
         phone.transfer(Path.of(DEFAULT_PAGE));

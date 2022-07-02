@@ -35,41 +35,25 @@ public class HttpRequest {
     public boolean hasParameters() {
         if (parameter2 == null) {
             return false;
-        } else if (parameter1 == null) {
-            return false;
-        }
-        return true;
+        } else return parameter1 != null;
     }
 
     public String getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
     public String getPath() {
         return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public String getParameter1() {
         return parameter1;
     }
 
-    public void setParameter1(String parameter1) {
-        this.parameter1 = parameter1;
-    }
 
     public String getParameter2() {
         return parameter2;
     }
 
-    public void setParameter2(String parameter2) {
-        this.parameter2 = parameter2;
-    }
+
 }
