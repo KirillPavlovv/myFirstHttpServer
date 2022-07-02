@@ -28,7 +28,6 @@ public class ServerService {
 
             while (true) {
                 Phone phone = new Phone(serverSocket);
-                System.out.println("Somebody is connected");
 
                 new Thread(() -> handleRequest(phone)).start();
             }
@@ -59,11 +58,11 @@ public class ServerService {
 
     private static void handleGetRequest(Phone phone, HttpRequest httpRequest) {
         try {
-            showDefaultPage(phone, httpRequest.getPath());
-
             if (httpRequest.getPath().contains("?")) {
                 checkUrlForIdGenerator(phone, httpRequest);
                 checkUrlForSalaryCalculator(phone, httpRequest);
+            } else if (httpRequest.getPath().equals("/")) {
+                showDefaultPage(phone, httpRequest.getPath());
             } else {
                 Path path = urlNotFound(phone, httpRequest.getPath());
                 if (path == null) return;
@@ -86,13 +85,11 @@ public class ServerService {
     }
 
     private static void showDefaultPage(Phone phone, String path) {
-        if (path.equals("/")) {
             phone.writeOut(HTTP_200_OK);
             phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
             phone.transfer(Path.of(DEFAULT_PAGE));
             phone.writeOut("\n");
-            phone.close();
-        }
+
     }
 
     private static void checkUrlForSalaryCalculator(Phone phone, HttpRequest httpRequest) {

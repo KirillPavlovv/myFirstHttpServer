@@ -99,6 +99,7 @@ public class Phone extends Writer {
         try {
             output.write(message);
             output.flush();
+//            output.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,7 +114,6 @@ public class Phone extends Writer {
         try {
             input.close();
             output.close();
-            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
