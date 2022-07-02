@@ -99,7 +99,6 @@ public class Phone extends Writer {
         try {
             output.write(message);
             output.flush();
-//            output.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

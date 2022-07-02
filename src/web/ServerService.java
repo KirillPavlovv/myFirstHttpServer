@@ -59,8 +59,7 @@ public class ServerService {
     private static void handleGetRequest(Phone phone, HttpRequest httpRequest) {
         try {
             if (httpRequest.getPath().contains("?")) {
-                checkUrlForIdGenerator(phone, httpRequest);
-                checkUrlForSalaryCalculator(phone, httpRequest);
+                handleRequestParameters(phone, httpRequest);
             } else if (httpRequest.getPath().equals("/")) {
                 showDefaultPage(phone, httpRequest.getPath());
             } else {
@@ -71,6 +70,12 @@ public class ServerService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void handleRequestParameters(Phone phone, HttpRequest httpRequest) {
+        httpRequest.setRequestParameters(phone);
+        checkUrlForIdGenerator(phone, httpRequest);
+        checkUrlForSalaryCalculator(phone, httpRequest);
     }
 
     private static void getAvailableFile(Phone phone, Path path) throws IOException {
@@ -120,6 +125,16 @@ public class ServerService {
             return null;
         }
         return path;
+    }
+
+
+    public static void badRequest(Phone phone) {
+        phone.writeOut("HTTP/1.1 400 BAD_REQUEST\n");
+        phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        phone.writeOut("\n");
+        phone.writeOut("<h1> BAD REQUEST</h1>\n");
+        phone.writeOut("<h1> ERROR 400</h1>\n");
+        phone.close();
     }
 
     private static String getContentType(Path path) throws IOException {

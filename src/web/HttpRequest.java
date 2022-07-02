@@ -9,17 +9,24 @@ public class HttpRequest {
     String parameter1;
     String parameter2;
 
-    public HttpRequest (String url) {
+    public HttpRequest(String url) {
         String[] urlParts = url.split(" ");
         method = urlParts[0];
         path = urlParts[1];
-        if (path.contains("?")) {
-            String[] firstSplit = urlParts[1].split("&");
-            List<String> stringList = new ArrayList<>();
-            for (String s : firstSplit) {
-                String[] split1 = s.split("=");
-                stringList.add(split1[1]);
+    }
+
+    public void setRequestParameters(Phone phone) {
+        String[] firstUrlPathSplit = path.split("&");
+        List<String> stringList = new ArrayList<>();
+        for (String s : firstUrlPathSplit) {
+            String[] secondUrlPathSplit = s.split("=");
+            if (secondUrlPathSplit.length == 1) {
+                ServerService.badRequest(phone);
+            } else {
+                stringList.add(secondUrlPathSplit[1]);
             }
+        }
+        if (stringList.size() == firstUrlPathSplit.length) {
             parameter1 = stringList.get(0);
             parameter2 = stringList.get(1);
         }
