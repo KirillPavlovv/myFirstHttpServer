@@ -58,14 +58,6 @@ public class Phone extends Writer {
         return true;
     }
 
-    public int read(char [] cbuf) {
-        try {
-           return input.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
     public int read() {
         try {
             return input.read();
@@ -74,9 +66,6 @@ public class Phone extends Writer {
         }
         return 0;
     }
-
-
-
 
     public void transfer(Path path) {
         try {
@@ -132,6 +121,12 @@ public class Phone extends Writer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+    }
+    public void closeSocket() {
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

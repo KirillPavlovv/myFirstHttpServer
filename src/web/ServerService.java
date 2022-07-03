@@ -43,25 +43,21 @@ public class ServerService {
 
 
         if (httpRequest.getMethod().equals("GET")) {
-            int contentLength = 0;
             while (phone.ready()) {
-//            String line = phone.readLine();
-//            System.out.println(line);
-//            int c;
-//            while ((c = phone.read()) != -1) {
-//                System.out.println((char)c);
-//            }
-
-                String line = phone.readLine();
-                System.out.println(line);
-                if (line.contains("Content-Length")) {
-                    String[] contentLengthLine = line.split(" ");
-                    contentLength = Integer.parseInt(contentLengthLine[1]);
-                }
+                System.out.println(phone.readLine());
             }
             handleGetRequest(phone, httpRequest);
         }
         if (httpRequest.getMethod().equals("POST")) {
+            StringBuilder content = new StringBuilder();
+//            while (phone.ready()) {
+            int c;
+            while ((c = phone.read()) != -1) {
+                content.append((char) c);
+            }
+            System.out.println(content);
+
+//            }
             handlePostRequest(phone, httpRequest);
         }
     }
@@ -73,7 +69,6 @@ public class ServerService {
     }
 
     private static void handleGetRequest(Phone phone, HttpRequest httpRequest) {
-        try {
             if (httpRequest.getPath().contains("?")) {
                 handleRequestParameters(phone, httpRequest);
             } else if (httpRequest.getPath().equals("/")) {
@@ -83,9 +78,6 @@ public class ServerService {
                 if (path == null) return;
                 getAvailableFile(phone, path);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private static void handleRequestParameters(Phone phone, HttpRequest httpRequest) {
@@ -96,10 +88,10 @@ public class ServerService {
         }
     }
 
-    private static void getAvailableFile(Phone phone, Path path) throws IOException {
+    private static void getAvailableFile(Phone phone, Path path) {
         phone.createFileOutputStream();
         HttpResponseService.fileResponse(phone, path);
-        phone.getClientSocket().close();
+        phone.closeSocket();
     }
 
     private static void checkUrlForSalaryCalculator(Phone phone, HttpRequest httpRequest) {
