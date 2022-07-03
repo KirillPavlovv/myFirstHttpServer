@@ -8,9 +8,9 @@ import java.nio.file.Path;
 public class HttpResponseService {
 
 
-    public static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
-    public static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
-    public static final String DEFAULT_PAGE = "main.html";
+    private static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
+    private static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
+    private static final String DEFAULT_PAGE = "main.html";
 
     static void fileResponse(Phone phone, Path path) {
         phone.write((HTTP_200_OK));
