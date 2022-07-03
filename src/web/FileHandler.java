@@ -7,7 +7,7 @@ public class FileHandler extends Writer {
     static FileOutputStream writer;
     static FileInputStream reader;
 
-    public void createStreams(String fileName) {
+    public static void createStreams(String fileName) {
         try {
             writer = new FileOutputStream(fileName);
             reader = new FileInputStream(fileName);
@@ -15,7 +15,7 @@ public class FileHandler extends Writer {
             e.printStackTrace();
         }
     }
-    public byte [] readFile(String fileName) {
+    public byte [] readFile() {
         try {
            return  reader.readAllBytes();
         } catch (IOException e) {
@@ -32,23 +32,13 @@ public class FileHandler extends Writer {
         }
     }
 
-    public static void readAll(String fileName) {
-        try {
-            reader.readAllBytes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
     @Override
-    public void write(char[] cbuf, int off, int len) throws IOException {
+    public void write(char[] cbuf, int off, int len) {
 
     }
 
     @Override
-    public void flush() throws IOException {
+    public void flush() {
 
     }
 

@@ -79,6 +79,7 @@ public class Phone extends Writer {
     public void write(char[] cbuf, int off, int len){
     }
 
+    @Override
     public void write(String message) {
         try {
             fileOutput.write((message).getBytes(StandardCharsets.UTF_8));

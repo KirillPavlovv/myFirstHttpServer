@@ -75,7 +75,6 @@ public class ServerService {
             httpRequest.setPath(postContent);
             httpRequest.setRequestParameters(phone);
             writeToFile(httpRequest, "ListOfNames.txt");
-            System.out.println(phone);
         }
     }
 
@@ -83,7 +82,7 @@ public class ServerService {
         String fullName = httpRequest.parameter1 + " " + httpRequest.parameter2 + "\n";
         FileHandler file = new FileHandler();
         file.createStreams(fileName);
-        byte[] allBytes = file.readFile(fileName);
+        byte[] allBytes = file.readFile();
         file.write(allBytes);
         file.write(fullName.getBytes(StandardCharsets.UTF_8));
         file.close();
