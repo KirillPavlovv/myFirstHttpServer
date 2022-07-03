@@ -37,10 +37,11 @@ public class ServerService {
         while (true) {
             if (phone.ready()) break;
         }
+        StringBuilder content = new StringBuilder();
+        int c;
         String firstLine = phone.readLine();
         HttpRequest httpRequest = new HttpRequest(firstLine);
         System.out.println(firstLine);
-
 
         if (httpRequest.getMethod().equals("GET")) {
             while (phone.ready()) {
@@ -48,17 +49,15 @@ public class ServerService {
             }
             handleGetRequest(phone, httpRequest);
         }
-        if (httpRequest.getMethod().equals("POST")) {
-            StringBuilder content = new StringBuilder();
-//            while (phone.ready()) {
-            int c;
-            while ((c = phone.read()) != -1) {
-                content.append((char) c);
-            }
-            System.out.println(content);
 
-//            }
-            handlePostRequest(phone, httpRequest);
+        if (httpRequest.getMethod().equals("POST")) {
+
+                while ((c = phone.read()) != -1) {
+                    content.append((char) c);
+                }
+                System.out.println(content);
+
+                handlePostRequest(phone, httpRequest);
         }
     }
 

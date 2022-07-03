@@ -77,7 +77,6 @@ public class Phone extends Writer {
 
     @Override
     public void write(char[] cbuf, int off, int len){
-
     }
 
     public void write(String message) {
@@ -94,10 +93,6 @@ public class Phone extends Writer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public Socket getClientSocket() {
-        return clientSocket;
     }
 
     public void writeOut(String message) {
