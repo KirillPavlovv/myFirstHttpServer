@@ -74,8 +74,7 @@ public class ServerService {
 
     private static void getAvailableFile(Phone phone, Path path) throws IOException {
         phone.createFileOutputStream();
-        String contentType = getContentType(path);
-        HttpResponseService.fileResponse(phone, path, contentType);
+        HttpResponseService.fileResponse(phone, path);
         phone.getClientSocket().close();
     }
 
@@ -100,10 +99,4 @@ public class ServerService {
         }
         return path;
     }
-
-    private static String getContentType(Path path) throws IOException {
-        return Files.probeContentType(path);
-    }
-
-
 }
