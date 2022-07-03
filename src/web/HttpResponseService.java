@@ -14,7 +14,7 @@ public class HttpResponseService {
 
     static void fileResponse(Phone phone, Path path) {
         phone.write((HTTP_200_OK));
-        phone.write(Headers.createHeaders(path));
+        phone.write(ResponseHeaders.createHeaders(path));
         phone.write(path);
         phone.flush();
     }

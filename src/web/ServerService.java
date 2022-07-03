@@ -40,11 +40,35 @@ public class ServerService {
         String firstLine = phone.readLine();
         HttpRequest httpRequest = new HttpRequest(firstLine);
         System.out.println(firstLine);
-        while (phone.ready()) {
-            System.out.println(phone.readLine());
-        }
+
+
         if (httpRequest.getMethod().equals("GET")) {
+            int contentLength = 0;
+            while (phone.ready()) {
+//            String line = phone.readLine();
+//            System.out.println(line);
+//            int c;
+//            while ((c = phone.read()) != -1) {
+//                System.out.println((char)c);
+//            }
+
+                String line = phone.readLine();
+                System.out.println(line);
+                if (line.contains("Content-Length")) {
+                    String[] contentLengthLine = line.split(" ");
+                    contentLength = Integer.parseInt(contentLengthLine[1]);
+                }
+            }
             handleGetRequest(phone, httpRequest);
+        }
+        if (httpRequest.getMethod().equals("POST")) {
+            handlePostRequest(phone, httpRequest);
+        }
+    }
+
+    private static void handlePostRequest(Phone phone, HttpRequest httpRequest) {
+        if (httpRequest.getPath().contains("addToList")) {
+
         }
     }
 
