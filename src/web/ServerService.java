@@ -37,8 +37,7 @@ public class ServerService {
         while (true) {
             if (phone.ready()) break;
         }
-        StringBuilder content = new StringBuilder();
-        int c;
+
         String firstLine = phone.readLine();
         HttpRequest httpRequest = new HttpRequest(firstLine);
         System.out.println(firstLine);
@@ -51,7 +50,8 @@ public class ServerService {
         }
 
         if (httpRequest.getMethod().equals("POST")) {
-
+            StringBuilder content = new StringBuilder();
+            int c;
                 while ((c = phone.read()) != -1) {
                     content.append((char) c);
                 }
