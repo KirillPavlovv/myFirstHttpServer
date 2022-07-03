@@ -6,6 +6,7 @@ import salary.SalaryCalculation;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -50,33 +51,55 @@ public class ServerService {
         }
 
         if (httpRequest.getMethod().equals("POST")) {
-            StringBuilder content = new StringBuilder();
-            int c;
-                while ((c = phone.read()) != -1) {
-                    content.append((char) c);
-                }
-                System.out.println(content);
-
-                handlePostRequest(phone, httpRequest);
+            String postContent = getPostContent(phone);
+            handlePostRequest(phone, httpRequest, postContent);
         }
     }
 
-    private static void handlePostRequest(Phone phone, HttpRequest httpRequest) {
+    private static String getPostContent(Phone phone) {
+        StringBuilder content = new StringBuilder();
+        int c;
+        while ((c = phone.read()) != -1) {
+            content.append((char) c);
+        }
+        String[] contentParts = content.toString().split("\r\n");
+
+        for (String contentPart : contentParts) {
+            System.out.println(contentPart);
+        }
+        return contentParts[contentParts.length - 1];
+    }
+
+    private static void handlePostRequest(Phone phone, HttpRequest httpRequest, String postContent) {
         if (httpRequest.getPath().contains("addToList")) {
-
+            httpRequest.setPath(postContent);
+            httpRequest.setRequestParameters(phone);
+            writeToFile(httpRequest, "ListOfNames.txt");
+            System.out.println(phone);
         }
     }
+
+    private static void writeToFile(HttpRequest httpRequest, String fileName) {
+        String fullName = httpRequest.parameter1 + " " + httpRequest.parameter2 + "\n";
+        FileHandler file = new FileHandler();
+        file.createStreams(fileName);
+        byte[] allBytes = file.readFile(fileName);
+        file.write(allBytes);
+        file.write(fullName.getBytes(StandardCharsets.UTF_8));
+        file.close();
+    }
+
 
     private static void handleGetRequest(Phone phone, HttpRequest httpRequest) {
-            if (httpRequest.getPath().contains("?")) {
-                handleRequestParameters(phone, httpRequest);
-            } else if (httpRequest.getPath().equals("/")) {
-                HttpResponseService.showDefaultPage(phone);
-            } else {
-                Path path = urlNotFound(phone, httpRequest.getPath());
-                if (path == null) return;
-                getAvailableFile(phone, path);
-            }
+        if (httpRequest.getPath().contains("?")) {
+            handleRequestParameters(phone, httpRequest);
+        } else if (httpRequest.getPath().equals("/")) {
+            HttpResponseService.showDefaultPage(phone);
+        } else {
+            Path path = urlNotFound(phone, httpRequest.getPath());
+            if (path == null) return;
+            getAvailableFile(phone, path);
+        }
     }
 
     private static void handleRequestParameters(Phone phone, HttpRequest httpRequest) {

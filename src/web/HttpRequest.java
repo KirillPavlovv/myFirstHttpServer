@@ -55,5 +55,7 @@ public class HttpRequest {
         return parameter2;
     }
 
-
+    public void setPath(String path) {
+        this.path = path;
+    }
 }
