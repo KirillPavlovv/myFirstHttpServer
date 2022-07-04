@@ -76,9 +76,9 @@ public class ServerService {
             httpRequest.setPath(postContent);
             httpRequest.setRequestParameters(phone);
             writeToFile(httpRequest, "ListOfNames.txt");
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("OK", "Name is added!");
-//            HttpResponseService.jsonResponse(phone, jsonObject);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("OK", "Name is added!");
+            HttpResponseService.sendJsonResponse(phone, jsonObject);
 
         }
     }
@@ -91,7 +91,6 @@ public class ServerService {
         file.write(fullName.getBytes(StandardCharsets.UTF_8));
         file.close();
     }
-
 
     private static void handleGetRequest(Phone phone, HttpRequest httpRequest) {
         if (httpRequest.getPath().contains("?")) {
@@ -142,6 +141,4 @@ public class ServerService {
         }
         return path;
     }
-
-
 }
