@@ -17,6 +17,15 @@ public class HttpResponseService {
         phone.write(ResponseHeaders.createHeaders(path));
         phone.write(path);
         phone.flush();
+        phone.close();
+    }
+
+    static void jsonResponse(Phone phone, JSONObject jsonObject) {
+        phone.write((HTTP_200_OK));
+        phone.write(ResponseHeaders.createHeaders(jsonObject));
+        phone.write(jsonObject.toString());
+        phone.flush();
+        phone.close();
     }
 
     static void showDefaultPage(Phone phone) {
@@ -59,8 +68,7 @@ public class HttpResponseService {
         jsonResponse.put("Net Salary", calculationResponse.getNetSalary());
 
         phone.writeOut(HTTP_200_OK);
-        phone.writeOut("Content-Type: application/json\n");
-        phone.writeOut("\n");
+        phone.writeOut(ResponseHeaders.createHeaders(jsonResponse));
         phone.writeOut(jsonResponse.toString());
         phone.close();
     }

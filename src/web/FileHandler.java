@@ -16,12 +16,20 @@ public class FileHandler extends Writer {
         }
     }
     public byte [] readFile() {
+
+        byte[] bytes = new byte[0];
         try {
-           return  reader.readAllBytes();
+            bytes = reader.readAllBytes();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        try {
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return bytes;
     }
 
     public void write(byte [] bytes) {
