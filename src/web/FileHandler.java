@@ -2,18 +2,25 @@ package web;
 
 import java.io.*;
 
-public class FileHandler extends Writer {
+public class FileHandler{
 
     static FileOutputStream writer;
     static FileInputStream reader;
 
-    public static void createStreams(String fileName) {
+
+
+    public FileHandler(String fileName) {
         try {
             writer = new FileOutputStream(fileName);
-            reader = new FileInputStream(fileName);
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        try {
+            reader = new FileInputStream(fileName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
     public byte [] readFile() {
 
@@ -40,17 +47,6 @@ public class FileHandler extends Writer {
         }
     }
 
-    @Override
-    public void write(char[] cbuf, int off, int len) {
-
-    }
-
-    @Override
-    public void flush() {
-
-    }
-
-    @Override
     public void close() {
         try {
             reader.close();

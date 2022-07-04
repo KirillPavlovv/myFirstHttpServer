@@ -68,7 +68,8 @@ public class HttpResponseService {
         jsonResponse.put("Net Salary", calculationResponse.getNetSalary());
 
         phone.writeOut(HTTP_200_OK);
-        phone.writeOut(ResponseHeaders.createHeaders(jsonResponse));
+        phone.writeOut("Content-Type: application/json\n");
+        phone.writeOut("\n");
         phone.writeOut(jsonResponse.toString());
         phone.close();
     }
