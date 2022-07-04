@@ -107,6 +107,11 @@ public class Phone extends Writer {
 
     @Override
     public void flush() {
+        try {
+            output.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
