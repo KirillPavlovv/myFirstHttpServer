@@ -137,7 +137,7 @@ public class ServerService {
     private static Path urlNotFound(Phone phone, String pathString) {
         Path path = Paths.get(".", pathString);
         if (!Files.exists(path)) {
-            return HttpResponseService.urlNorFoundError(phone);
+            return HttpResponseService.urlNotFoundError(phone);
         }
         return path;
     }

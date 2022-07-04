@@ -40,7 +40,7 @@ public class HttpResponseService {
         phone.close();
     }
 
-    static Path urlNorFoundError(Phone phone) {
+    static Path urlNotFoundError(Phone phone) {
         phone.writeOut("HTTP/1.1 404 NOT_FOUND\n");
         phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
         phone.writeOut("\n");
