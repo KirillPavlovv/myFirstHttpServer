@@ -45,6 +45,7 @@ public class HttpResponseService {
         phone.writeOut("\n");
         phone.writeOut("<h1> URL NOT FOUND!</h1>\n");
         phone.writeOut("<h1> ERROR 404</h1>\n");
+        phone.flush();
         phone.close();
         return null;
     }
