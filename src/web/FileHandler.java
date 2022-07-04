@@ -1,9 +1,9 @@
 package web;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileHandler{
 
@@ -25,21 +25,16 @@ public class FileHandler{
         }
 
     }
-    public byte [] readFile() {
 
-        byte[] bytes = new byte[0];
+    public byte[] readFile(String filename) {
+        Path path = Paths.get(".", filename);
         try {
-            bytes = reader.readAllBytes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            reader.close();
+           return  Files.readAllBytes(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return bytes;
+        return null;
     }
 
     public void write(byte [] bytes) {
@@ -63,4 +58,5 @@ public class FileHandler{
         }
 
     }
+
 }

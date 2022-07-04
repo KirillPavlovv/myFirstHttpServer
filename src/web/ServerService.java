@@ -76,20 +76,17 @@ public class ServerService {
             httpRequest.setPath(postContent);
             httpRequest.setRequestParameters(phone);
             writeToFile(httpRequest, "ListOfNames.txt");
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("OK", "Name is added!");
-            HttpResponseService.sendJsonResponse(phone, jsonObject);
-
         }
     }
 
     private static void writeToFile(HttpRequest httpRequest, String fileName) {
         String fullName = httpRequest.parameter1 + " " + httpRequest.parameter2 + "\n";
-        FileHandler file = new FileHandler(fileName);
-        byte[] allBytes = file.readFile();
-        file.write(allBytes);
-        file.write(fullName.getBytes(StandardCharsets.UTF_8));
-        file.close();
+        FileHandler fileHandler = new FileHandler(fileName);
+        byte[] bytes = fileHandler.readFile(fileName);
+
+        fileHandler.write(bytes);
+        fileHandler.write(fullName.getBytes(StandardCharsets.UTF_8));
+        fileHandler.close();
     }
 
     private static void handleGetRequest(Phone phone, HttpRequest httpRequest) {
