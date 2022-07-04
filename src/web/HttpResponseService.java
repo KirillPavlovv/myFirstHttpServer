@@ -20,14 +20,6 @@ public class HttpResponseService {
         phone.close();
     }
 
-    static void jsonResponse(Phone phone, JSONObject jsonObject) {
-        phone.write((HTTP_200_OK));
-        phone.write(ResponseHeaders.createHeaders(jsonObject));
-        phone.write(jsonObject.toString());
-        phone.flush();
-        phone.close();
-    }
-
     static void showDefaultPage(Phone phone) {
         phone.writeOut(HTTP_200_OK);
         phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
@@ -67,18 +59,15 @@ public class HttpResponseService {
         jsonResponse.put("Income Tax", calculationResponse.getIncomeTax());
         jsonResponse.put("Net Salary", calculationResponse.getNetSalary());
 
-        phone.writeOut(HTTP_200_OK);
-        phone.writeOut("Content-Type: application/json\n");
-        phone.writeOut("\n");
-        phone.writeOut(jsonResponse.toString());
-        phone.close();
+        sendJsonResponse(phone, jsonResponse);
     }
 
-    static void idGeneratorResponse(Phone phone, String idNumber) {
-        phone.writeOut(HTTP_200_OK);
-        phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+    static void sendJsonResponse(Phone phone, JSONObject jsonObject) {
+        phone.writeOut((HTTP_200_OK));
+        phone.writeOut("Content-Type: application/json\n");
         phone.writeOut("\n");
-        phone.writeOut(idNumber + "\n");
+        phone.writeOut(jsonObject.toString());
+        phone.flush();
         phone.close();
     }
 

@@ -1,6 +1,7 @@
 package web;
 
 import idnumber.IdService;
+import org.json.JSONObject;
 import salary.ResultResponse;
 import salary.SalaryCalculation;
 
@@ -128,7 +129,9 @@ public class ServerService {
     private static void checkUrlForIdGenerator(Phone phone, HttpRequest httpRequest) {
         if (httpRequest.getPath().contains("idgenerator")) {
             String idNumber = IdService.generateId(httpRequest);
-            HttpResponseService.idGeneratorResponse(phone, idNumber);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("Personal code", idNumber);
+            HttpResponseService.sendJsonResponse(phone, jsonObject);
         }
     }
 
