@@ -111,7 +111,6 @@ public class Phone extends Writer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void close() {
@@ -122,6 +121,7 @@ public class Phone extends Writer {
             e.printStackTrace();
         }
     }
+
     public void closeSocket() {
         try {
             clientSocket.close();

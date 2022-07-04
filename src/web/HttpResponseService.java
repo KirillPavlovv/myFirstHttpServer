@@ -27,8 +27,6 @@ public class HttpResponseService {
         phone.transfer(Path.of(DEFAULT_PAGE));
         phone.flush();
         phone.close();
-
-
     }
 
     static void badRequest(Phone phone) {
@@ -37,6 +35,7 @@ public class HttpResponseService {
         phone.writeOut("\n");
         phone.writeOut("<h1> BAD REQUEST</h1>\n");
         phone.writeOut("<h1> ERROR 400</h1>\n");
+        phone.flush();
         phone.close();
     }
 
