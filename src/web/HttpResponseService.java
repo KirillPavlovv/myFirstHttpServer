@@ -23,9 +23,11 @@ public class HttpResponseService {
     static void showDefaultPage(Phone phone) {
         phone.writeOut(HTTP_200_OK);
         phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-        phone.transfer(Path.of(DEFAULT_PAGE));
         phone.writeOut("\n");
+        phone.transfer(Path.of(DEFAULT_PAGE));
+        phone.flush();
         phone.close();
+
 
     }
 
