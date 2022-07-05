@@ -205,14 +205,6 @@ public class SocketService {
         }
     }
 
-    public void writeOut(String message) {
-        try {
-            output.write(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void flush() throws IOException {
         output.flush();
     }
