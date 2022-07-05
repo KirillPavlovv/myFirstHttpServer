@@ -3,21 +3,19 @@ package web;
 import org.json.JSONObject;
 import salary.ResultResponse;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 public class HttpResponseService {
-
 
     private static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
     private static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
     private static final String DEFAULT_PAGE = "main.html";
 
-    static void fileResponse(Phone phone, Path path) {
+    static void fileResponse(Phone phone, Path path) throws IOException {
         phone.write((HTTP_200_OK));
         phone.write(ResponseHeaders.createHeaders(path));
         phone.write(path);
-        phone.flush();
-        phone.close();
     }
 
     static void showDefaultPage(Phone phone) {
@@ -25,8 +23,6 @@ public class HttpResponseService {
         phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
         phone.writeOut("\n");
         phone.transfer(Path.of(DEFAULT_PAGE));
-        phone.flush();
-        phone.close();
     }
 
     static void badRequest(Phone phone) {
@@ -35,8 +31,6 @@ public class HttpResponseService {
         phone.writeOut("\n");
         phone.writeOut("<h1> BAD REQUEST</h1>\n");
         phone.writeOut("<h1> ERROR 400</h1>\n");
-        phone.flush();
-        phone.close();
     }
 
     static Path urlNotFoundError(Phone phone) {
@@ -45,8 +39,6 @@ public class HttpResponseService {
         phone.writeOut("\n");
         phone.writeOut("<h1> URL NOT FOUND!</h1>\n");
         phone.writeOut("<h1> ERROR 404</h1>\n");
-        phone.flush();
-        phone.close();
         return null;
     }
 
@@ -69,8 +61,6 @@ public class HttpResponseService {
         phone.writeOut("Content-Type: application/json\n");
         phone.writeOut("\n");
         phone.writeOut(jsonObject.toString());
-        phone.flush();
-        phone.close();
     }
 
 
