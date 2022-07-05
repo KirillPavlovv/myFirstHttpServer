@@ -82,9 +82,10 @@ public class ServerService {
     private static void writeToFile(HttpRequest httpRequest, String fileName) {
         String fullName = httpRequest.parameter1 + " " + httpRequest.parameter2 + "\n";
         FileHandler fileHandler = new FileHandler(fileName);
-        byte[] bytes = fileHandler.readFile(fileName);
+        byte[] bytes = fileHandler.readFile();
 
         fileHandler.write(bytes);
+
         fileHandler.write(fullName.getBytes(StandardCharsets.UTF_8));
         fileHandler.close();
     }
