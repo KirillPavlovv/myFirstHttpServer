@@ -46,12 +46,13 @@ public class Response {
         close();
     }
 
-    static Path urlNotFoundError(SocketService socketService) {
-        socketService.writeOut("HTTP/1.1 404 NOT_FOUND\n");
-        socketService.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-        socketService.writeOut("\n");
-        socketService.writeOut("<h1> URL NOT FOUND!</h1>\n");
-        socketService.writeOut("<h1> ERROR 404</h1>\n");
+    static Path urlNotFoundError() throws IOException {
+        writeOut("HTTP/1.1 404 NOT_FOUND\n");
+        writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        writeOut("\n");
+        writeOut("<h1> URL NOT FOUND!</h1>\n");
+        writeOut("<h1> ERROR 404</h1>\n");
+        close();
         return null;
     }
 

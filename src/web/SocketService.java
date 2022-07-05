@@ -103,10 +103,11 @@ public class SocketService {
         }
     }
 
-    private Path urlNotFound(String pathString) {
+    private Path urlNotFound(String pathString) throws IOException {
         Path path = Paths.get(".", pathString);
         if (!Files.exists(path)) {
-            return Response.urlNotFoundError(this);
+            Response response = new Response(clientSocket);
+            return response.urlNotFoundError();
         }
         return path;
     }
