@@ -12,37 +12,37 @@ public class Response {
     private static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
     private static final String DEFAULT_PAGE = "main.html";
 
-    static void fileResponse(Phone phone, Path path) throws IOException {
-        phone.write((HTTP_200_OK));
-        phone.write(ResponseHeaders.createHeaders(path));
-        phone.write(path);
+    static void fileResponse(SocketService socketService, Path path) throws IOException {
+        socketService.write((HTTP_200_OK));
+        socketService.write(ResponseHeaders.createHeaders(path));
+        socketService.write(path);
     }
 
-    static void showDefaultPage(Phone phone) {
-        phone.writeOut(HTTP_200_OK);
-        phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-        phone.writeOut("\n");
-        phone.transfer(Path.of(DEFAULT_PAGE));
+    static void showDefaultPage(SocketService socketService) {
+        socketService.writeOut(HTTP_200_OK);
+        socketService.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        socketService.writeOut("\n");
+        socketService.transfer(Path.of(DEFAULT_PAGE));
     }
 
-    static void badRequest(Phone phone) {
-        phone.writeOut("HTTP/1.1 400 BAD_REQUEST\n");
-        phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-        phone.writeOut("\n");
-        phone.writeOut("<h1> BAD REQUEST</h1>\n");
-        phone.writeOut("<h1> ERROR 400</h1>\n");
+    static void badRequest(SocketService socketService) {
+        socketService.writeOut("HTTP/1.1 400 BAD_REQUEST\n");
+        socketService.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        socketService.writeOut("\n");
+        socketService.writeOut("<h1> BAD REQUEST</h1>\n");
+        socketService.writeOut("<h1> ERROR 400</h1>\n");
     }
 
-    static Path urlNotFoundError(Phone phone) {
-        phone.writeOut("HTTP/1.1 404 NOT_FOUND\n");
-        phone.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
-        phone.writeOut("\n");
-        phone.writeOut("<h1> URL NOT FOUND!</h1>\n");
-        phone.writeOut("<h1> ERROR 404</h1>\n");
+    static Path urlNotFoundError(SocketService socketService) {
+        socketService.writeOut("HTTP/1.1 404 NOT_FOUND\n");
+        socketService.writeOut(CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8);
+        socketService.writeOut("\n");
+        socketService.writeOut("<h1> URL NOT FOUND!</h1>\n");
+        socketService.writeOut("<h1> ERROR 404</h1>\n");
         return null;
     }
 
-    static void printSalaryCalculationResponse(Phone phone, ResultResponse calculationResponse) {
+    static void printSalaryCalculationResponse(SocketService socketService, ResultResponse calculationResponse) {
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("Total costs for Employer", calculationResponse.getTotalCostForEmployer());
         jsonResponse.put("Social Tax", calculationResponse.getSocialTax());
@@ -53,14 +53,14 @@ public class Response {
         jsonResponse.put("Income Tax", calculationResponse.getIncomeTax());
         jsonResponse.put("Net Salary", calculationResponse.getNetSalary());
 
-        sendJsonResponse(phone, jsonResponse);
+        sendJsonResponse(socketService, jsonResponse);
     }
 
-    static void sendJsonResponse(Phone phone, JSONObject jsonObject) {
-        phone.writeOut((HTTP_200_OK));
-        phone.writeOut("Content-Type: application/json\n");
-        phone.writeOut("\n");
-        phone.writeOut(jsonObject.toString());
+    static void sendJsonResponse(SocketService socketService, JSONObject jsonObject) {
+        socketService.writeOut((HTTP_200_OK));
+        socketService.writeOut("Content-Type: application/json\n");
+        socketService.writeOut("\n");
+        socketService.writeOut(jsonObject.toString());
     }
 
 

@@ -15,13 +15,13 @@ public class Request {
         path = urlParts[1];
     }
 
-    public void setRequestParameters(Phone phone) {
+    public void setRequestParameters(SocketService socketService) {
         String[] firstUrlPathSplit = path.split("&");
         List<String> stringList = new ArrayList<>();
         for (String s : firstUrlPathSplit) {
             String[] secondUrlPathSplit = s.split("=");
             if (secondUrlPathSplit.length == 1) {
-                Response.badRequest(phone);
+                Response.badRequest(socketService);
             } else {
                 stringList.add(secondUrlPathSplit[1]);
             }

@@ -12,14 +12,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Phone {
+public class SocketService {
 
     private final Socket clientSocket;
     private BufferedReader input;
     private BufferedWriter output;
     private OutputStream fileOutput;
 
-    public Phone(Socket clientSocket) {
+    public SocketService(Socket clientSocket) {
         this.clientSocket = clientSocket;
         System.out.println("Somebody is connected");
     }

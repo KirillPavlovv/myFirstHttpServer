@@ -16,9 +16,9 @@ public class ServerService {
             System.out.println("Server is started ");
 
             while (true) {
-                Phone phone = new Phone(serverSocket.accept());
+                SocketService socketService = new SocketService(serverSocket.accept());
 
-                new Thread(phone::handleRequest).start();
+                new Thread(socketService::handleRequest).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
