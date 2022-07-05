@@ -1,5 +1,7 @@
 package web;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +17,14 @@ public class Request {
         path = urlParts[1];
     }
 
-    public void setRequestParameters(SocketService socketService) {
+    public void setRequestParameters(Socket socket) throws IOException {
         String[] firstUrlPathSplit = path.split("&");
         List<String> stringList = new ArrayList<>();
         for (String s : firstUrlPathSplit) {
             String[] secondUrlPathSplit = s.split("=");
             if (secondUrlPathSplit.length == 1) {
-                Response.badRequest(socketService);
+                Response response = new Response(socket);
+                response.badRequest();
             } else {
                 stringList.add(secondUrlPathSplit[1]);
             }

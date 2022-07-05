@@ -65,7 +65,8 @@ public class SocketService {
         if (request.getPath().contains("?")) {
             handleRequestParameters(request);
         } else if (request.getPath().equals("/")) {
-            Response.showDefaultPage(this);
+            Response response = new Response(clientSocket);
+            response.showDefaultPage();
         } else {
             Path path = urlNotFound(request.getPath());
             if (path == null) return;
@@ -73,8 +74,8 @@ public class SocketService {
         }
     }
 
-    private void handleRequestParameters(Request request) {
-        request.setRequestParameters(this);
+    private void handleRequestParameters(Request request) throws IOException {
+        request.setRequestParameters(clientSocket);
         if ((request.hasParameters())) {
             handleGetPersonalCodeGenerator(request);
             handleGetSalaryCalculator(request);
@@ -144,15 +145,15 @@ public class SocketService {
         return content.toString().split("\r\n\r\n");
     }
 
-    private void handlePostRequest(Request request, String postContent) {
+    private void handlePostRequest(Request request, String postContent) throws IOException {
         if (request.getPath().contains("addToList")) {
             addToListPostRequest(request, postContent);
         }
     }
 
-    private void addToListPostRequest(Request request, String postContent) {
+    private void addToListPostRequest(Request request, String postContent) throws IOException {
         request.setPath(postContent);
-        request.setRequestParameters(this);
+        request.setRequestParameters(clientSocket);
         writeToFile(request, "ListOfNames.txt");
     }
 
@@ -188,13 +189,6 @@ public class SocketService {
         return input.read();
     }
 
-    public void transfer(Path path) {
-        try {
-            Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void write(String message) throws IOException {
         fileOutput.write((message).getBytes(StandardCharsets.UTF_8));
