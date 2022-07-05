@@ -63,6 +63,22 @@ public class ServerService {
     }
 
     private static void addPicturePostRequest(Phone phone, HttpRequest httpRequest, String[] postContent) {
+        String filename = "";
+        String[] fileDataLines = postContent[1].split("\r\n");
+        for (String fileDataLine : fileDataLines) {
+            if (fileDataLine.contains("Content-Disposition")) {
+                String[] lineParts = fileDataLine.split(" ");
+                for (String linePart : lineParts) {
+                    if (linePart.contains("filename")) {
+                        String[] filenameContent = linePart.split("=");
+                        filename = filenameContent[1];
+                        break;
+                    }
+                }
+            }
+
+
+        }
 
     }
 
