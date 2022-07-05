@@ -27,7 +27,6 @@ public class SocketService {
     public void handleRequest() {
         try (clientSocket) {
             doHandleRequest();
-            flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -203,9 +202,5 @@ public class SocketService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void flush() throws IOException {
-        output.flush();
     }
 }

@@ -87,7 +87,9 @@ public class Response {
     }
 
     public static void close() throws IOException {
+        output.flush();
         output.close();
     }
+
 
 }
