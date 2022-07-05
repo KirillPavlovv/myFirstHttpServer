@@ -16,7 +16,6 @@ public class SocketService {
 
     private final Socket clientSocket;
     private BufferedReader input;
-    private BufferedWriter output;
     private OutputStream fileOutput;
 
     public SocketService(Socket clientSocket) {
@@ -33,7 +32,7 @@ public class SocketService {
     }
 
     private void doHandleRequest() throws IOException {
-        createStreams();
+        createInputStream();
         while (true) {
             if (ready()) break;
         }
@@ -170,9 +169,8 @@ public class SocketService {
         fileHandler.close();
     }
 
-    public void createStreams() throws IOException {
+    public void createInputStream() throws IOException {
         input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
     }
 
     public void createFileOutputStream() throws IOException {
