@@ -53,7 +53,9 @@ public class ServerService {
 
         if (httpRequest.getMethod().equals("POST")) {
             String postContent = getPostContent(phone);
-            handlePostRequest(phone, httpRequest, postContent);
+            if (httpRequest.getPath().contains("addToList")) {
+                handlePostRequest(phone, httpRequest, postContent);
+            }
         }
     }
 
@@ -63,20 +65,20 @@ public class ServerService {
         while ((c = phone.read()) != -1) {
             content.append((char) c);
         }
-        String[] contentParts = content.toString().split("\r\n");
-
-        for (String contentPart : contentParts) {
-            System.out.println(contentPart);
-        }
-        return contentParts[contentParts.length - 1];
+        String[] contentParts = content.toString().split("\r\n\r\n");
+        return contentParts[1];
     }
 
     private static void handlePostRequest(Phone phone, HttpRequest httpRequest, String postContent) {
         if (httpRequest.getPath().contains("addToList")) {
-            httpRequest.setPath(postContent);
-            httpRequest.setRequestParameters(phone);
-            writeToFile(httpRequest, "ListOfNames.txt");
+            addToListPostRequest(phone, httpRequest, postContent);
         }
+    }
+
+    private static void addToListPostRequest(Phone phone, HttpRequest httpRequest, String postContent) {
+        httpRequest.setPath(postContent);
+        httpRequest.setRequestParameters(phone);
+        writeToFile(httpRequest, "ListOfNames.txt");
     }
 
     private static void writeToFile(HttpRequest httpRequest, String fileName) {
@@ -105,8 +107,8 @@ public class ServerService {
     private static void handleRequestParameters(Phone phone, HttpRequest httpRequest) {
         httpRequest.setRequestParameters(phone);
         if ((httpRequest.hasParameters())) {
-            checkUrlForIdGenerator(phone, httpRequest);
-            checkUrlForSalaryCalculator(phone, httpRequest);
+            handleGetPersonalCodeGenerator(phone, httpRequest);
+            handleGetSalaryCalculator(phone, httpRequest);
         }
     }
 
@@ -116,14 +118,14 @@ public class ServerService {
         phone.closeSocket();
     }
 
-    private static void checkUrlForSalaryCalculator(Phone phone, HttpRequest httpRequest) {
+    private static void handleGetSalaryCalculator(Phone phone, HttpRequest httpRequest) {
         if (httpRequest.getPath().contains("salarycalculator")) {
             ResultResponse calculationResponse = SalaryCalculation.calculateSalary(httpRequest);
             HttpResponseService.printSalaryCalculationResponse(phone, calculationResponse);
         }
     }
 
-    private static void checkUrlForIdGenerator(Phone phone, HttpRequest httpRequest) {
+    private static void handleGetPersonalCodeGenerator(Phone phone, HttpRequest httpRequest) {
         if (httpRequest.getPath().contains("idgenerator")) {
             String idNumber = IdService.generateId(httpRequest);
             JSONObject jsonObject = new JSONObject();
