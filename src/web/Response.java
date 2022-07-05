@@ -56,7 +56,7 @@ public class Response {
         return null;
     }
 
-    static void printSalaryCalculationResponse(SocketService socketService, ResultResponse calculationResponse) {
+    static void printSalaryCalculationResponse(ResultResponse calculationResponse) throws IOException {
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("Total costs for Employer", calculationResponse.getTotalCostForEmployer());
         jsonResponse.put("Social Tax", calculationResponse.getSocialTax());
@@ -67,14 +67,15 @@ public class Response {
         jsonResponse.put("Income Tax", calculationResponse.getIncomeTax());
         jsonResponse.put("Net Salary", calculationResponse.getNetSalary());
 
-        sendJsonResponse(socketService, jsonResponse);
+        sendJsonResponse(jsonResponse);
     }
 
-    static void sendJsonResponse(SocketService socketService, JSONObject jsonObject) {
-        socketService.writeOut((HTTP_200_OK));
-        socketService.writeOut("Content-Type: application/json\n");
-        socketService.writeOut("\n");
-        socketService.writeOut(jsonObject.toString());
+    static void sendJsonResponse(JSONObject jsonObject) throws IOException {
+        writeOut((HTTP_200_OK));
+        writeOut("Content-Type: application/json\n");
+        writeOut("\n");
+        writeOut(jsonObject.toString());
+        close();
     }
 
     public static void writeOut(String message) throws IOException {

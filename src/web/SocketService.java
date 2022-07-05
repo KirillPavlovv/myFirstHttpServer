@@ -87,19 +87,21 @@ public class SocketService {
         Response.fileResponse(this, path);
     }
 
-    private void handleGetSalaryCalculator(Request request) {
+    private void handleGetSalaryCalculator(Request request) throws IOException {
         if (request.getPath().contains("salarycalculator")) {
             ResultResponse calculationResponse = SalaryCalculation.calculateSalary(request);
-            Response.printSalaryCalculationResponse(this, calculationResponse);
+            Response response = new Response(clientSocket);
+            Response.printSalaryCalculationResponse(calculationResponse);
         }
     }
 
-    private void handleGetPersonalCodeGenerator(Request request) {
+    private void handleGetPersonalCodeGenerator(Request request) throws IOException {
         if (request.getPath().contains("idgenerator")) {
             String idNumber = IdService.generateId(request);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Personal code", idNumber);
-            Response.sendJsonResponse(this, jsonObject);
+            Response response = new Response(clientSocket);
+            response.sendJsonResponse(jsonObject);
         }
     }
 
