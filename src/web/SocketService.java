@@ -61,57 +61,53 @@ public class SocketService {
         }
     }
 
-    public void createStreams() throws IOException {
-        input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-    }
-
-    public void createFileOutputStream() throws IOException {
-        fileOutput = clientSocket.getOutputStream();
-    }
-
-    public String readLine() throws IOException {
-        return input.readLine();
-    }
-
-    public boolean ready() throws IOException {
-        return input.ready();
-    }
-
-    public int read() throws IOException {
-        return input.read();
-    }
-
-    public void transfer(Path path) {
-        try {
-            Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void handleGetRequest(Request request) throws IOException {
+        if (request.getPath().contains("?")) {
+            handleRequestParameters(request);
+        } else if (request.getPath().equals("/")) {
+            Response.showDefaultPage(this);
+        } else {
+            Path path = urlNotFound(request.getPath());
+            if (path == null) return;
+            getAvailableFile(path);
         }
     }
 
-    public void write(String message) throws IOException {
-        fileOutput.write((message).getBytes(StandardCharsets.UTF_8));
-    }
-
-    public void write(Path path) {
-        try {
-            fileOutput.write(Files.readAllBytes(path));
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void handleRequestParameters(Request request) {
+        request.setRequestParameters(this);
+        if ((request.hasParameters())) {
+            handleGetPersonalCodeGenerator(request);
+            handleGetSalaryCalculator(request);
         }
     }
 
-    public void writeOut(String message) {
-        try {
-            output.write(message);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void getAvailableFile(Path path) throws IOException {
+        createFileOutputStream();
+        Response.fileResponse(this, path);
+    }
+
+    private void handleGetSalaryCalculator(Request request) {
+        if (request.getPath().contains("salarycalculator")) {
+            ResultResponse calculationResponse = SalaryCalculation.calculateSalary(request);
+            Response.printSalaryCalculationResponse(this, calculationResponse);
         }
     }
 
-    public void flush() throws IOException {
-        output.flush();
+    private void handleGetPersonalCodeGenerator(Request request) {
+        if (request.getPath().contains("idgenerator")) {
+            String idNumber = IdService.generateId(request);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("Personal code", idNumber);
+            Response.sendJsonResponse(this, jsonObject);
+        }
+    }
+
+    private Path urlNotFound(String pathString) {
+        Path path = Paths.get(".", pathString);
+        if (!Files.exists(path)) {
+            return Response.urlNotFoundError(this);
+        }
+        return path;
     }
 
     private void addPicturePostRequest(Request request, String[] postContent) {
@@ -171,52 +167,56 @@ public class SocketService {
         fileHandler.close();
     }
 
-    private void handleGetRequest(Request request) throws IOException {
-        if (request.getPath().contains("?")) {
-            handleRequestParameters(request);
-        } else if (request.getPath().equals("/")) {
-            Response.showDefaultPage(this);
-        } else {
-            Path path = urlNotFound(request.getPath());
-            if (path == null) return;
-            getAvailableFile(path);
+    public void createStreams() throws IOException {
+        input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        output = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+    }
+
+    public void createFileOutputStream() throws IOException {
+        fileOutput = clientSocket.getOutputStream();
+    }
+
+    public String readLine() throws IOException {
+        return input.readLine();
+    }
+
+    public boolean ready() throws IOException {
+        return input.ready();
+    }
+
+    public int read() throws IOException {
+        return input.read();
+    }
+
+    public void transfer(Path path) {
+        try {
+            Files.newBufferedReader(path, StandardCharsets.UTF_8).transferTo(output);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void handleRequestParameters(Request request) {
-        request.setRequestParameters(this);
-        if ((request.hasParameters())) {
-            handleGetPersonalCodeGenerator(request);
-            handleGetSalaryCalculator(request);
+    public void write(String message) throws IOException {
+        fileOutput.write((message).getBytes(StandardCharsets.UTF_8));
+    }
+
+    public void write(Path path) {
+        try {
+            fileOutput.write(Files.readAllBytes(path));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void getAvailableFile(Path path) throws IOException {
-        createFileOutputStream();
-        Response.fileResponse(this, path);
-    }
-
-    private void handleGetSalaryCalculator(Request request) {
-        if (request.getPath().contains("salarycalculator")) {
-            ResultResponse calculationResponse = SalaryCalculation.calculateSalary(request);
-            Response.printSalaryCalculationResponse(this, calculationResponse);
+    public void writeOut(String message) {
+        try {
+            output.write(message);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void handleGetPersonalCodeGenerator(Request request) {
-        if (request.getPath().contains("idgenerator")) {
-            String idNumber = IdService.generateId(request);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("Personal code", idNumber);
-            Response.sendJsonResponse(this, jsonObject);
-        }
-    }
-
-    private Path urlNotFound(String pathString) {
-        Path path = Paths.get(".", pathString);
-        if (!Files.exists(path)) {
-            return Response.urlNotFoundError(this);
-        }
-        return path;
+    public void flush() throws IOException {
+        output.flush();
     }
 }
