@@ -3,13 +3,13 @@ package web;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HttpRequest {
+public class Request {
     String method;
     String path;
     String parameter1;
     String parameter2;
 
-    public HttpRequest(String url) {
+    public Request(String url) {
         String[] urlParts = url.split(" ");
         method = urlParts[0];
         path = urlParts[1];
@@ -21,7 +21,7 @@ public class HttpRequest {
         for (String s : firstUrlPathSplit) {
             String[] secondUrlPathSplit = s.split("=");
             if (secondUrlPathSplit.length == 1) {
-                HttpResponseService.badRequest(phone);
+                Response.badRequest(phone);
             } else {
                 stringList.add(secondUrlPathSplit[1]);
             }

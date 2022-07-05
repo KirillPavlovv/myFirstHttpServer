@@ -6,7 +6,7 @@ import salary.ResultResponse;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class HttpResponseService {
+public class Response {
 
     private static final String CONTENT_TYPE_TEXT_HTML_CHARSET_UTF_8 = "Content-Type: text/html, charset=utf-8\n";
     private static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";

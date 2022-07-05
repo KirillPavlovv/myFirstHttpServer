@@ -40,23 +40,23 @@ public class Phone {
         }
 
         String firstLine = readLine();
-        HttpRequest httpRequest = new HttpRequest(firstLine);
+        Request request = new Request(firstLine);
         System.out.println(firstLine);
 
-        if (httpRequest.getMethod().equals("GET")) {
+        if (request.getMethod().equals("GET")) {
             while (ready()) {
                 System.out.println(readLine());
             }
-            handleGetRequest(httpRequest);
+            handleGetRequest(request);
         }
 
-        if (httpRequest.getMethod().equals("POST")) {
+        if (request.getMethod().equals("POST")) {
             String[] postContent = getPostContent();
-            if (httpRequest.getPath().contains("addToList")) {
-                handlePostRequest(httpRequest, postContent[1]);
+            if (request.getPath().contains("addToList")) {
+                handlePostRequest(request, postContent[1]);
             }
-            if (httpRequest.getPath().contains("addPicture")) {
-                addPicturePostRequest(httpRequest, postContent);
+            if (request.getPath().contains("addPicture")) {
+                addPicturePostRequest(request, postContent);
             }
         }
     }
@@ -114,7 +114,7 @@ public class Phone {
         output.flush();
     }
 
-    private void addPicturePostRequest(HttpRequest httpRequest, String[] postContent) {
+    private void addPicturePostRequest(Request request, String[] postContent) {
         String uploadedFileName = getUploadedFileName(postContent);
         String filePath = ".pictures";
         byte[] image = postContent[2].getBytes(StandardCharsets.UTF_8);
@@ -148,20 +148,20 @@ public class Phone {
         return content.toString().split("\r\n\r\n");
     }
 
-    private void handlePostRequest(HttpRequest httpRequest, String postContent) {
-        if (httpRequest.getPath().contains("addToList")) {
-            addToListPostRequest(httpRequest, postContent);
+    private void handlePostRequest(Request request, String postContent) {
+        if (request.getPath().contains("addToList")) {
+            addToListPostRequest(request, postContent);
         }
     }
 
-    private void addToListPostRequest(HttpRequest httpRequest, String postContent) {
-        httpRequest.setPath(postContent);
-        httpRequest.setRequestParameters(this);
-        writeToFile(httpRequest, "ListOfNames.txt");
+    private void addToListPostRequest(Request request, String postContent) {
+        request.setPath(postContent);
+        request.setRequestParameters(this);
+        writeToFile(request, "ListOfNames.txt");
     }
 
-    private static void writeToFile(HttpRequest httpRequest, String fileName) {
-        String fullName = httpRequest.parameter1 + " " + httpRequest.parameter2 + "\n";
+    private static void writeToFile(Request request, String fileName) {
+        String fullName = request.parameter1 + " " + request.parameter2 + "\n";
         FileHandler fileHandler = new FileHandler(fileName);
         byte[] bytes = fileHandler.readFile();
 
@@ -171,51 +171,51 @@ public class Phone {
         fileHandler.close();
     }
 
-    private void handleGetRequest(HttpRequest httpRequest) throws IOException {
-        if (httpRequest.getPath().contains("?")) {
-            handleRequestParameters(httpRequest);
-        } else if (httpRequest.getPath().equals("/")) {
-            HttpResponseService.showDefaultPage(this);
+    private void handleGetRequest(Request request) throws IOException {
+        if (request.getPath().contains("?")) {
+            handleRequestParameters(request);
+        } else if (request.getPath().equals("/")) {
+            Response.showDefaultPage(this);
         } else {
-            Path path = urlNotFound(httpRequest.getPath());
+            Path path = urlNotFound(request.getPath());
             if (path == null) return;
             getAvailableFile(path);
         }
     }
 
-    private void handleRequestParameters(HttpRequest httpRequest) {
-        httpRequest.setRequestParameters(this);
-        if ((httpRequest.hasParameters())) {
-            handleGetPersonalCodeGenerator(httpRequest);
-            handleGetSalaryCalculator(httpRequest);
+    private void handleRequestParameters(Request request) {
+        request.setRequestParameters(this);
+        if ((request.hasParameters())) {
+            handleGetPersonalCodeGenerator(request);
+            handleGetSalaryCalculator(request);
         }
     }
 
     private void getAvailableFile(Path path) throws IOException {
         createFileOutputStream();
-        HttpResponseService.fileResponse(this, path);
+        Response.fileResponse(this, path);
     }
 
-    private void handleGetSalaryCalculator(HttpRequest httpRequest) {
-        if (httpRequest.getPath().contains("salarycalculator")) {
-            ResultResponse calculationResponse = SalaryCalculation.calculateSalary(httpRequest);
-            HttpResponseService.printSalaryCalculationResponse(this, calculationResponse);
+    private void handleGetSalaryCalculator(Request request) {
+        if (request.getPath().contains("salarycalculator")) {
+            ResultResponse calculationResponse = SalaryCalculation.calculateSalary(request);
+            Response.printSalaryCalculationResponse(this, calculationResponse);
         }
     }
 
-    private void handleGetPersonalCodeGenerator(HttpRequest httpRequest) {
-        if (httpRequest.getPath().contains("idgenerator")) {
-            String idNumber = IdService.generateId(httpRequest);
+    private void handleGetPersonalCodeGenerator(Request request) {
+        if (request.getPath().contains("idgenerator")) {
+            String idNumber = IdService.generateId(request);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Personal code", idNumber);
-            HttpResponseService.sendJsonResponse(this, jsonObject);
+            Response.sendJsonResponse(this, jsonObject);
         }
     }
 
     private Path urlNotFound(String pathString) {
         Path path = Paths.get(".", pathString);
         if (!Files.exists(path)) {
-            return HttpResponseService.urlNotFoundError(this);
+            return Response.urlNotFoundError(this);
         }
         return path;
     }

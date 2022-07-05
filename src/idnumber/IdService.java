@@ -1,6 +1,6 @@
 package idnumber;
 
-import web.HttpRequest;
+import web.Request;
 
 public class IdService {
 
@@ -12,9 +12,9 @@ public class IdService {
 
     }
 
-    public static String generateId(HttpRequest httpRequest) {
+    public static String generateId(Request request) {
 
-        String[] splitBirthday = httpRequest.getParameter2().split("-");
+        String[] splitBirthday = request.getParameter2().split("-");
         StringBuilder stringBuilderBirthday = new StringBuilder();
         for (String s : splitBirthday) {
             stringBuilderBirthday.insert(0, s);
@@ -23,7 +23,7 @@ public class IdService {
         stringBuilderBirthday.delete(0, 1);
         String birthday = stringBuilderBirthday.toString();
 
-        return new EstonianIdNumber(birthday, httpRequest.getParameter1()).generateIdNumber();
+        return new EstonianIdNumber(birthday, request.getParameter1()).generateIdNumber();
     }
 
 
