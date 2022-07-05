@@ -3,9 +3,7 @@ package web;
 import org.json.JSONObject;
 import salary.ResultResponse;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,10 +21,14 @@ public class Response {
     private static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
     private static final String DEFAULT_PAGE = "main.html";
 
-    static void fileResponse(SocketService socketService, Path path) throws IOException {
-        socketService.write((HTTP_200_OK));
-        socketService.write(ResponseHeaders.createHeaders(path));
-        socketService.write(path);
+    static void fileResponse(Socket socket, Path path) throws IOException {
+        OutputStream fileOutput = socket.getOutputStream();
+
+        fileOutput.write((HTTP_200_OK).getBytes(StandardCharsets.UTF_8));
+        fileOutput.write(ResponseHeaders.createHeaders(path).getBytes(StandardCharsets.UTF_8));
+        fileOutput.write(Files.readAllBytes(path));
+        fileOutput.flush();
+        fileOutput.close();
     }
 
     static void showDefaultPage() throws IOException {

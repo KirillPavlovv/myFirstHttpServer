@@ -16,7 +16,6 @@ public class SocketService {
 
     private final Socket clientSocket;
     private BufferedReader input;
-    private OutputStream fileOutput;
 
     public SocketService(Socket clientSocket) {
         this.clientSocket = clientSocket;
@@ -81,8 +80,7 @@ public class SocketService {
     }
 
     private void getAvailableFile(Path path) throws IOException {
-        createFileOutputStream();
-        Response.fileResponse(this, path);
+        Response.fileResponse(clientSocket, path);
     }
 
     private void handleGetSalaryCalculator(Request request) throws IOException {
@@ -173,10 +171,6 @@ public class SocketService {
         input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
 
-    public void createFileOutputStream() throws IOException {
-        fileOutput = clientSocket.getOutputStream();
-    }
-
     public String readLine() throws IOException {
         return input.readLine();
     }
@@ -189,16 +183,4 @@ public class SocketService {
         return input.read();
     }
 
-
-    public void write(String message) throws IOException {
-        fileOutput.write((message).getBytes(StandardCharsets.UTF_8));
-    }
-
-    public void write(Path path) {
-        try {
-            fileOutput.write(Files.readAllBytes(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
