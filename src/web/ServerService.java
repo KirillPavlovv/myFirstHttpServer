@@ -52,21 +52,27 @@ public class ServerService {
         }
 
         if (httpRequest.getMethod().equals("POST")) {
-            String postContent = getPostContent(phone);
+            String [] postContent = getPostContent(phone);
             if (httpRequest.getPath().contains("addToList")) {
-                handlePostRequest(phone, httpRequest, postContent);
+                handlePostRequest(phone, httpRequest, postContent[1]);
+            }
+            if (httpRequest.getPath().contains("addPicture")) {
+                addPicturePostRequest(phone, httpRequest,postContent);
             }
         }
     }
 
-    private static String getPostContent(Phone phone) {
+    private static void addPicturePostRequest(Phone phone, HttpRequest httpRequest, String[] postContent) {
+
+    }
+
+    private static String [] getPostContent(Phone phone) {
         StringBuilder content = new StringBuilder();
         int c;
         while ((c = phone.read()) != -1) {
             content.append((char) c);
         }
-        String[] contentParts = content.toString().split("\r\n\r\n");
-        return contentParts[1];
+        return  content.toString().split("\r\n\r\n");
     }
 
     private static void handlePostRequest(Phone phone, HttpRequest httpRequest, String postContent) {
