@@ -22,6 +22,9 @@ public class FileHandler{
         }
     }
 
+    public FileHandler() {
+    }
+
     public byte[] readFile() {
 
         try {

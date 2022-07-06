@@ -50,11 +50,10 @@ public class SocketService {
         if (request.getMethod().equals("POST")) {
             String[] postContent = getPostContent();
             if (request.getPath().contains("addToList")) {
-                JSONObject addToListContent = request.postRequestParametersToJson(postContent[1]);
-                addToListPostRequest(addToListContent);
+                addNameToList(request, postContent);
             }
-            if (request.getPath().contains("addPicture")) {
-                addPicturePostRequest(request, postContent);
+            if (request.getPath().contains("uploadFile")) {
+                uploadFilePostRequest(postContent);
             }
         }
     }
@@ -111,11 +110,19 @@ public class SocketService {
         return path;
     }
 
-    private void addPicturePostRequest(Request request, String[] postContent) {
-        String uploadedFileName = getUploadedFileName(postContent);
-        String filePath = ".pictures";
-        byte[] image = postContent[2].getBytes(StandardCharsets.UTF_8);
+    private void addNameToList(Request request, String[] postContent) throws IOException {
+        String filename = "ListOfNames.txt";
+        JSONObject addToListContent = request.postRequestParametersToJson(postContent[1]);
+        writeToFile(addToListContent, filename);
+    }
 
+    private void uploadFilePostRequest(String[] postContent) throws IOException {
+        String uploadedFileName = getUploadedFileName(postContent);
+        byte[] imageBytes = postContent[2].getBytes(StandardCharsets.UTF_8);
+        FileOutputStream out = new FileOutputStream(uploadedFileName);
+        out.write(imageBytes);
+        out.flush();
+        out.close();
 
     }
 
@@ -128,7 +135,7 @@ public class SocketService {
                 for (String linePart : lineParts) {
                     if (linePart.contains("filename")) {
                         String[] filenameContent = linePart.split("=");
-                        return filenameContent[1].substring(1, filename.length() - 1);
+                        return filenameContent[1].substring(1, (filenameContent[1].length() - 1));
                     }
                 }
             }
@@ -143,11 +150,6 @@ public class SocketService {
             content.append((char) c);
         }
         return content.toString().split("\r\n\r\n");
-    }
-
-
-    private void addToListPostRequest(JSONObject jsonObject) throws IOException {
-        writeToFile(jsonObject, "ListOfNames.txt");
     }
 
     private static void writeToFile(JSONObject jsonObject, String fileName) throws IOException {
