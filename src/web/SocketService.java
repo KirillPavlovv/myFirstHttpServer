@@ -122,6 +122,15 @@ public class SocketService {
 
     }
 
+    private String[] getPostContent() throws IOException {
+        StringBuilder content = new StringBuilder();
+        int c;
+        while ((c = read()) != -1) {
+            content.append((char) c);
+        }
+        return content.toString().split("\r\n\r\n");
+    }
+
     private static String getUploadedFileName(String[] postContent) {
         String filename = "";
         String[] fileDataLines = postContent[1].split("\r\n");
@@ -137,15 +146,6 @@ public class SocketService {
             }
         }
         return filename;
-    }
-
-    private String[] getPostContent() throws IOException {
-        StringBuilder content = new StringBuilder();
-        int c;
-        while ((c = read()) != -1) {
-            content.append((char) c);
-        }
-        return content.toString().split("\r\n\r\n");
     }
 
     private static void writeToFile(JSONObject jsonObject, String fileName) throws IOException {
