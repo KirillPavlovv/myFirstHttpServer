@@ -1,9 +1,12 @@
 package web;
 
+import org.json.JSONObject;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class FileHandler{
 
@@ -45,6 +48,9 @@ public class FileHandler{
             e.printStackTrace();
         }
 
+    }
+    public void write(JSONObject jsonObject) throws IOException {
+        writer.write(jsonObject.toString().getBytes(StandardCharsets.UTF_8));
     }
 
 }

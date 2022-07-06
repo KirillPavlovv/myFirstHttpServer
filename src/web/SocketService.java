@@ -50,7 +50,8 @@ public class SocketService {
         if (request.getMethod().equals("POST")) {
             String[] postContent = getPostContent();
             if (request.getPath().contains("addToList")) {
-                handlePostRequest(request, postContent[1]);
+                JSONObject addToListContent = request.postRequestParametersToJson(postContent[1]);
+                addToListPostRequest(addToListContent);
             }
             if (request.getPath().contains("addPicture")) {
                 addPicturePostRequest(request, postContent);
@@ -144,26 +145,18 @@ public class SocketService {
         return content.toString().split("\r\n\r\n");
     }
 
-    private void handlePostRequest(Request request, String postContent) throws IOException {
-        if (request.getPath().contains("addToList")) {
-            addToListPostRequest(request, postContent);
-        }
+
+    private void addToListPostRequest(JSONObject jsonObject) throws IOException {
+        writeToFile(jsonObject, "ListOfNames.txt");
     }
 
-    private void addToListPostRequest(Request request, String postContent) throws IOException {
-        request.setPath(postContent);
-        request.setRequestParameters(clientSocket);
-        writeToFile(request, "ListOfNames.txt");
-    }
-
-    private static void writeToFile(Request request, String fileName) {
-        String fullName = request.parameter1 + " " + request.parameter2 + "\n";
+    private static void writeToFile(JSONObject jsonObject, String fileName) throws IOException {
         FileHandler fileHandler = new FileHandler(fileName);
         byte[] bytes = fileHandler.readFile();
 
         fileHandler.write(bytes);
 
-        fileHandler.write(fullName.getBytes(StandardCharsets.UTF_8));
+        fileHandler.write(jsonObject);
         fileHandler.close();
     }
 

@@ -1,5 +1,7 @@
 package web;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -33,6 +35,16 @@ public class Request {
             parameter1 = stringList.get(0);
             parameter2 = stringList.get(1);
         }
+    }
+
+    public JSONObject postRequestParametersToJson(String postContent) {
+        JSONObject json = new JSONObject();
+        String[] parameters = postContent.split("&");
+        for (String parameter : parameters) {
+            String[] keyValue = parameter.split("=");
+            json.put(keyValue[0], keyValue[1]);
+        }
+        return json;
     }
 
     public boolean hasParameters() {
