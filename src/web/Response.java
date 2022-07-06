@@ -1,9 +1,11 @@
 package web;
 
 import org.json.JSONObject;
-import salary.ResultResponse;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -56,20 +58,6 @@ public class Response {
         writeOut("<h1> ERROR 404</h1>\n");
         close();
         return null;
-    }
-
-    static void printSalaryCalculationResponse(ResultResponse calculationResponse) throws IOException {
-        JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("Total costs for Employer", calculationResponse.getTotalCostForEmployer());
-        jsonResponse.put("Social Tax", calculationResponse.getSocialTax());
-        jsonResponse.put("Unemployment Insurance Tax for Employer", calculationResponse.getUnemploymentInsuranceEmployer());
-        jsonResponse.put("Gross Salary", calculationResponse.getGrossSalary());
-        jsonResponse.put("II Funded Pension", calculationResponse.getFundedPension());
-        jsonResponse.put("Unemployment Insurance Tax for Employee", calculationResponse.getUnEmploymentInsuranceEmployee());
-        jsonResponse.put("Income Tax", calculationResponse.getIncomeTax());
-        jsonResponse.put("Net Salary", calculationResponse.getNetSalary());
-
-        sendJsonResponse(jsonResponse);
     }
 
     static void sendJsonResponse(JSONObject jsonObject) throws IOException {

@@ -87,7 +87,7 @@ public class SocketService {
         if (request.getPath().contains("salarycalculator")) {
             ResultResponse calculationResponse = SalaryCalculation.calculateSalary(request);
             Response response = new Response(clientSocket);
-            response.printSalaryCalculationResponse(calculationResponse);
+            response.sendJsonResponse(JsonHandler.salaryCalculationResponseToJson(calculationResponse));
         }
     }
 
