@@ -67,7 +67,7 @@ public class SocketService {
         } else {
             Path path = urlNotFound(request.getPath());
             if (path == null) return;
-            getAvailableFile(path);
+            Response.fileResponse(clientSocket, path);
         }
     }
 
@@ -77,10 +77,6 @@ public class SocketService {
             handleGetPersonalCodeGenerator(request);
             handleGetSalaryCalculator(request);
         }
-    }
-
-    private void getAvailableFile(Path path) throws IOException {
-        Response.fileResponse(clientSocket, path);
     }
 
     private void handleGetSalaryCalculator(Request request) throws IOException {
