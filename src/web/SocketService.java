@@ -149,13 +149,13 @@ public class SocketService {
     }
 
     private static void writeToFile(JSONObject jsonObject, String fileName) throws IOException {
-        FileHandler fileHandler = new FileHandler(fileName);
-        byte[] bytes = fileHandler.readFile();
-
-        fileHandler.write(bytes);
-
-        fileHandler.write(jsonObject);
-        fileHandler.close();
+        FileInputStream input = new FileInputStream(fileName);
+        byte[] bytes = input.readAllBytes();
+        FileOutputStream output = new FileOutputStream(fileName);
+        output.write(bytes);
+        output.write((jsonObject.toString()+"\n").getBytes(StandardCharsets.UTF_8));
+        input.close();
+        output.close();
     }
 
     public void createInputStream() throws IOException {

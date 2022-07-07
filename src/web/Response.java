@@ -25,9 +25,10 @@ public class Response {
 
     static void fileResponse(Socket socket, Path path) throws IOException {
         OutputStream fileOutput = socket.getOutputStream();
+        String encodedContent = "teretere";
 
         fileOutput.write((HTTP_200_OK).getBytes(StandardCharsets.UTF_8));
-        fileOutput.write(ResponseHeaders.createHeaders(path).getBytes(StandardCharsets.UTF_8));
+        fileOutput.write(ResponseHeaders.createHeaders(path, encodedContent).getBytes(StandardCharsets.UTF_8));
         fileOutput.write(Files.readAllBytes(path));
         fileOutput.flush();
         fileOutput.close();

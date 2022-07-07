@@ -23,8 +23,8 @@ public class ResponseHeaders {
 
     }
 
-    public static String createHeaders(Path path) {
+    public static String createHeaders(Path path, String encodedContent) {
         ResponseHeaders responseHeaders = new ResponseHeaders(path);
-        return "Connection: Keep-Alive\nContent-Length: " + size + "\nContent-Type: " + contentType + "\n\n";
+        return "Connection: Keep-Alive\nContent-Length: " + size + "\nContent-Type: " + contentType + "\nAuthorization: Basic " + encodedContent +"\n\n";
     }
 }
