@@ -39,14 +39,10 @@ public class SocketService {
         String firstLine = readLine();
         Request request = new Request(firstLine);
         System.out.println(firstLine);
-
         if (request.getMethod().equals("GET")) {
-            while (ready()) {
-                System.out.println(readLine());
-            }
-            handleGetRequest(request);
+            JSONObject headers = getJsonHeaders();
+            handleGetRequest(request, headers);
         }
-
         if (request.getMethod().equals("POST")) {
             String[] postContent = getPostContent();
             if (request.getPath().contains("addToList")) {
@@ -58,7 +54,21 @@ public class SocketService {
         }
     }
 
-    private void handleGetRequest(Request request) throws IOException {
+    private JSONObject getJsonHeaders() throws IOException {
+        JSONObject headersJson = new JSONObject();
+        while (ready()) {
+            String line = readLine();
+            if(!line.isEmpty()) {
+                String[] lineParts = line.split(": ");
+                headersJson.put(lineParts[0], lineParts[1]);
+
+                System.out.println(line);
+            }
+        }
+        return headersJson;
+    }
+
+    private void handleGetRequest(Request request, JSONObject headers) throws IOException {
         if (request.getPath().contains("?")) {
             handleRequestParameters(request);
         } else if (request.getPath().equals("/")) {
@@ -67,7 +77,16 @@ public class SocketService {
         } else {
             Path path = urlNotFound(request.getPath());
             if (path == null) return;
+            if (request.getPath().contains("addtolist")) {
+                checkForAuthorization(headers);
+            }
             Response.fileResponse(clientSocket, path);
+        }
+    }
+
+    private void checkForAuthorization(JSONObject headers) {
+        if (headers.has("Authorization")) {
+
         }
     }
 

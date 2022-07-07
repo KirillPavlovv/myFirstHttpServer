@@ -61,6 +61,10 @@ public class Response {
         return null;
     }
 
+    static void unauthorizedError() {
+
+    }
+
     static void sendJsonResponse(JSONObject jsonObject) throws IOException {
         writeOut((HTTP_200_OK));
         writeOut("Content-Type: application/json\n");
