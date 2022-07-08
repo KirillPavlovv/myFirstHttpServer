@@ -23,12 +23,11 @@ public class Response {
     private static final String HTTP_200_OK = "HTTP/1.1 200 OK\n";
     private static final String DEFAULT_PAGE = "main.html";
 
-    static void fileResponse(Socket socket, Path path) throws IOException {
+    static void fileResponse(Socket socket, Path path, String authorizationContent) throws IOException {
         OutputStream fileOutput = socket.getOutputStream();
-        String encodedContent = "teretere";
 
         fileOutput.write((HTTP_200_OK).getBytes(StandardCharsets.UTF_8));
-        fileOutput.write(ResponseHeaders.createHeaders(path, encodedContent).getBytes(StandardCharsets.UTF_8));
+        fileOutput.write(ResponseHeaders.createHeaders(path, authorizationContent).getBytes(StandardCharsets.UTF_8));
         fileOutput.write(Files.readAllBytes(path));
         fileOutput.flush();
         fileOutput.close();
@@ -75,6 +74,7 @@ public class Response {
         out.write(("ContentType: text/html\r\n").getBytes());
         out.write(("WWW-Authenticate: Basic realm=/User Visible Realm \r\n").getBytes());
         out.flush();
+        out.close();
     }
 
     public static void writeOut(String message) throws IOException {

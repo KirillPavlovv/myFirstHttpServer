@@ -1,0 +1,3 @@
+admin:admin
+kirill:kirill
+123:123
