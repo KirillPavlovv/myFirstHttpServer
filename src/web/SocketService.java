@@ -128,9 +128,6 @@ public class SocketService {
                     }
                 }
             }
-//            else {
-//                errorUnauthorized(clientSocket);
-//            }
         }
     }
 
