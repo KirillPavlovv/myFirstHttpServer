@@ -11,6 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
+
+import static web.Response.errorUnauthorized;
 
 public class SocketService {
 
@@ -78,17 +81,51 @@ public class SocketService {
             Path path = urlNotFound(request.getPath());
             if (path == null) return;
             if (request.getPath().contains("addtolist")) {
-                checkForAuthorization(headers);
+                checkForAuthorization(headers, path);
+            } else {
+                Response.fileResponse(clientSocket, path);
             }
-            Response.fileResponse(clientSocket, path);
+
         }
     }
 
-    private void checkForAuthorization(JSONObject headers) {
+    private void checkForAuthorization(JSONObject headers, Path path) throws IOException {
         if (headers.has("Authorization")) {
+            String authorizationContent = headers.get("Authorization").toString();
+            String[] contentParts = authorizationContent.split(" ");
+            byte[] decode = Base64.getDecoder().decode(contentParts[1]);
+            String loginAndPassword = new String(decode, StandardCharsets.UTF_8);
+            String[] loginAndPasswordInArray = loginAndPassword.split(":");
+            validation(loginAndPasswordInArray, headers, path);
 
+        } else {
+            errorUnauthorized(clientSocket);
         }
     }
+
+    private void validation(String[] loginAndPasswordInArray, JSONObject headers, Path path) throws IOException {
+        String filename = "loginandpass.txt";
+        FileInputStream input = new FileInputStream(filename);
+        byte[] bytes = input.readAllBytes();
+        String namesAnsPasswords = new String(bytes, StandardCharsets.UTF_8);
+        String[] split = namesAnsPasswords.split("\r\n");
+        for (String s : split) {
+            if (s.equals(loginAndPasswordInArray[0])) {
+                String[] separateNameAndPass = s.split(":");
+                String name = separateNameAndPass[0];
+                String pass = separateNameAndPass[1];
+                if (name.equals(loginAndPasswordInArray[0])) {
+                    if (pass.equals(loginAndPasswordInArray[1])) {
+                        Response.fileResponse(clientSocket, path);
+                    }
+                    errorUnauthorized(clientSocket);
+                }
+            }
+            errorUnauthorized(clientSocket);
+        }
+        System.out.println(filename);
+    }
+
 
     private void handleRequestParameters(Request request) throws IOException {
         request.setRequestParameters(clientSocket);

@@ -61,16 +61,20 @@ public class Response {
         return null;
     }
 
-    static void unauthorizedError() {
-
-    }
-
     static void sendJsonResponse(JSONObject jsonObject) throws IOException {
         writeOut((HTTP_200_OK));
         writeOut("Content-Type: application/json\n");
         writeOut("\n");
         writeOut(jsonObject.toString());
         close();
+    }
+
+    static void errorUnauthorized(Socket socket) throws IOException {
+        OutputStream out = socket.getOutputStream();
+        out.write(("HTTP/1.1 401 Unauthorized \r\n").getBytes());
+        out.write(("ContentType: text/html\r\n").getBytes());
+        out.write(("WWW-Authenticate: Basic realm=/User Visible Realm \r\n").getBytes());
+        out.flush();
     }
 
     public static void writeOut(String message) throws IOException {
