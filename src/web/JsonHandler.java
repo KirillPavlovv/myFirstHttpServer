@@ -3,11 +3,12 @@ package web;
 import org.json.JSONObject;
 import salary.ResultResponse;
 
-import java.io.IOException;
-
 public class JsonHandler {
 
-    static JSONObject salaryCalculationResponseToJson(ResultResponse calculationResponse) throws IOException {
+    private JsonHandler() {
+    }
+
+    static JSONObject salaryCalculationResponseToJson(ResultResponse calculationResponse) {
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("Total costs for Employer", calculationResponse.getTotalCostForEmployer());
         jsonResponse.put("Social Tax", calculationResponse.getSocialTax());
