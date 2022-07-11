@@ -7,11 +7,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Request {
-    String method;
-    String path;
-    String parameter1;
-    String parameter2;
+    private final String method;
+    private final String path;
+    private String parameter1;
+    private String parameter2;
 
     public Request(String url) {
         String[] urlParts = url.split(" ");
@@ -65,12 +66,8 @@ public class Request {
         return parameter1;
     }
 
-
     public String getParameter2() {
         return parameter2;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
 }
