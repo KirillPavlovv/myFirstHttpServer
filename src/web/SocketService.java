@@ -138,8 +138,7 @@ public class SocketService {
         FileInputStream input = new FileInputStream(filename);
         byte[] bytes = input.readAllBytes();
         String namesAndPasswords = new String(bytes, StandardCharsets.UTF_8);
-        String[] split = namesAndPasswords.split("\r\n");
-        return split;
+        return namesAndPasswords.split("\r\n");
     }
 
 
